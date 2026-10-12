@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="430" viewBox="0 0 1200 430" role="img" aria-labelledby="title desc">
+<title id="title">VoxConverse evaluation protocol</title>
+<desc id="desc">VoxConverse uses a frozen 177-session training split, 39-session validation split, and the official test partition for Tasks A, B and C plus diagnostic analyses.</desc>
+<rect width="1200" height="430" rx="24" fill="#f8fafc"/>
+<text x="600" y="42" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" fill="#0f172a">VoxConverse evaluation protocol</text>
+<text x="600" y="70" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#475569">Audio-based multiparty evaluation • frozen development split • official TEST partition</text>
+
+<rect x="55" y="110" width="330" height="120" rx="20" fill="#eff6ff" stroke="#60a5fa" stroke-width="2"/>
+<text x="220" y="147" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#1d4ed8">Development split</text>
+<rect x="92" y="170" width="125" height="38" rx="9" fill="#bfdbfe"/>
+<text x="154" y="195" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="700" fill="#1e3a8a">177 TRAIN</text>
+<rect x="230" y="170" width="115" height="38" rx="9" fill="#fde68a"/>
+<text x="287" y="195" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="700" fill="#92400e">39 VAL</text>
+
+<rect x="435" y="110" width="330" height="120" rx="20" fill="#ecfdf5" stroke="#34d399" stroke-width="2"/>
+<text x="600" y="147" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#047857">Official TEST partition</text>
+<text x="600" y="181" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#334155">232 sessions</text>
+<text x="600" y="205" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#475569">6,348 canonical SHIFT events</text>
+
+<rect x="815" y="110" width="330" height="120" rx="20" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="2"/>
+<text x="980" y="147" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#6d28d9">Event interpretation</text>
+<text x="980" y="178" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#334155">normal transfer • interruption</text>
+<text x="980" y="202" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#334155">backchannel • brief interjection • continuation</text>
+
+<rect x="55" y="270" width="330" height="105" rx="18" fill="#fff7ed" stroke="#fb923c" stroke-width="2"/>
+<text x="220" y="307" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700" fill="#c2410c">Task A</text>
+<text x="220" y="334" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#334155">Supplied-point SHIFT/HOLD</text>
+<text x="220" y="358" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#475569">Macro-F1</text>
+
+<rect x="435" y="270" width="330" height="105" rx="18" fill="#fffbeb" stroke="#f59e0b" stroke-width="2"/>
+<text x="600" y="307" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700" fill="#b45309">Task B</text>
+<text x="600" y="334" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#334155">Automatic-candidate verification</text>
+<text x="600" y="358" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#475569">Event F1</text>
+
+<rect x="815" y="270" width="330" height="105" rx="18" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="2"/>
+<text x="980" y="307" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700" fill="#6d28d9">Task C</text>
+<text x="980" y="334" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#334155">Continuous discovery</text>
+<text x="980" y="358" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#475569">±0.50 s primary • ±0.70/±1.00 s sensitivity</text>
+
+<text x="600" y="410" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#475569">Thresholds and operating points are selected on TRAIN/VAL; TEST is reserved for final evaluation.</text>
+</svg>
