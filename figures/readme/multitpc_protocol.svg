@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="430" viewBox="0 0 1200 430" role="img" aria-labelledby="title desc">
+<title id="title">Multi-TPC evaluation protocol</title>
+<desc id="desc">Seven triadic conversational groups support an original held-out evaluation, post-hoc seven-group nested analysis, and fixed-configuration ablations.</desc>
+<rect width="1200" height="430" rx="24" fill="#f8fafc"/>
+<text x="600" y="42" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" fill="#0f172a">Multi-TPC evaluation protocol</text>
+<text x="600" y="70" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#475569">Seven triadic conversational groups • multimodal interaction</text>
+
+<text x="95" y="122" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700" fill="#334155">Groups</text>
+<g font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700" text-anchor="middle">
+  <circle cx="250" cy="116" r="24" fill="#dbeafe" stroke="#60a5fa"/><text x="250" y="122" fill="#1e3a8a">G1</text>
+  <circle cx="330" cy="116" r="24" fill="#dbeafe" stroke="#60a5fa"/><text x="330" y="122" fill="#1e3a8a">G2</text>
+  <circle cx="410" cy="116" r="24" fill="#dbeafe" stroke="#60a5fa"/><text x="410" y="122" fill="#1e3a8a">G3</text>
+  <circle cx="490" cy="116" r="24" fill="#dbeafe" stroke="#60a5fa"/><text x="490" y="122" fill="#1e3a8a">G4</text>
+  <circle cx="570" cy="116" r="24" fill="#dbeafe" stroke="#60a5fa"/><text x="570" y="122" fill="#1e3a8a">G5</text>
+  <circle cx="650" cy="116" r="24" fill="#dbeafe" stroke="#60a5fa"/><text x="650" y="122" fill="#1e3a8a">G6</text>
+  <circle cx="730" cy="116" r="24" fill="#dbeafe" stroke="#60a5fa"/><text x="730" y="122" fill="#1e3a8a">G7</text>
+</g>
+
+<rect x="55" y="174" width="330" height="190" rx="20" fill="#eff6ff" stroke="#60a5fa" stroke-width="2"/>
+<text x="220" y="211" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#1d4ed8">Original held-out evaluation</text>
+<rect x="88" y="238" width="166" height="42" rx="10" fill="#bfdbfe"/><text x="171" y="265" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="700" fill="#1e3a8a">5 groups TRAIN</text>
+<rect x="265" y="238" width="86" height="42" rx="10" fill="#fde68a"/><text x="308" y="265" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="700" fill="#92400e">1 VAL</text>
+<rect x="176" y="294" width="88" height="42" rx="10" fill="#dcfce7"/><text x="220" y="321" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="700" fill="#166534">1 TEST</text>
+
+<rect x="435" y="174" width="330" height="190" rx="20" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="2"/>
+<text x="600" y="211" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#6d28d9">Post-hoc seven-group analysis</text>
+<text x="600" y="252" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#334155">Each group serves once as</text>
+<text x="600" y="276" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#334155">the outer held-out group.</text>
+<path d="M510 315 h180" stroke="#8b5cf6" stroke-width="4" stroke-linecap="round"/>
+<circle cx="510" cy="315" r="8" fill="#8b5cf6"/><circle cx="540" cy="315" r="8" fill="#8b5cf6"/><circle cx="570" cy="315" r="8" fill="#8b5cf6"/><circle cx="600" cy="315" r="8" fill="#8b5cf6"/><circle cx="630" cy="315" r="8" fill="#8b5cf6"/><circle cx="660" cy="315" r="8" fill="#8b5cf6"/><circle cx="690" cy="315" r="8" fill="#8b5cf6"/>
+
+<rect x="815" y="174" width="330" height="190" rx="20" fill="#ecfdf5" stroke="#34d399" stroke-width="2"/>
+<text x="980" y="211" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#047857">Fixed-configuration ablations</text>
+<text x="980" y="249" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#334155">Stage and modality contributions</text>
+<g font-family="Arial, Helvetica, sans-serif" font-size="14" text-anchor="middle" fill="#065f46">
+  <rect x="850" y="276" width="72" height="40" rx="9" fill="#d1fae5"/><text x="886" y="301">Audio</text>
+  <rect x="930" y="276" width="82" height="40" rx="9" fill="#d1fae5"/><text x="971" y="301">Speaker</text>
+  <rect x="1020" y="276" width="70" height="40" rx="9" fill="#d1fae5"/><text x="1055" y="301">Gaze</text>
+  <rect x="885" y="326" width="82" height="40" rx="9" fill="#d1fae5"/><text x="926" y="351">Motion</text>
+  <rect x="978" y="326" width="88" height="40" rx="9" fill="#d1fae5"/><text x="1022" y="351">Prosody</text>
+</g>
+
+<text x="600" y="407" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#475569">The seven-group analysis is robustness evidence, not a second untouched confirmatory test set.</text>
+</svg>
