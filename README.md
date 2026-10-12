@@ -87,7 +87,7 @@ The public VoxConverse release is organized around:
 
 The notebooks contain code cells only. Task labels in code and retained outputs use historical names: Branch 2 = Task A, Branch 2E = Task B, Branch 1 = Task C, and Branch 3 = the future-activity diagnostic.
 
-The executed VoxConverse pipeline contains bounded contextual/look-ahead evidence in several components. The public notebooks preserve that executed information contract rather than rewriting the historical experiment as strictly past-only. Details are documented in `docs/VOXCONVERSE_PUBLIC_RELEASE_AUDIT.md`.
+The executed VoxConverse pipeline contains bounded contextual/look-ahead evidence in several components. The public notebooks preserve that executed information contract rather than rewriting the historical experiment as strictly past-only. The affected components are the candidate-centred WavLM windows, right-side ASR context used by the Qwen-derived scores, some post-candidate System-2 features, symmetric neighbouring-candidate context in the temporal verifier, and post-candidate evidence in the RR-FAP diagnostics. No TEST ground-truth labels enter the TEST feature or prediction path.
 
 ### Multi-TPC
 
@@ -153,7 +153,7 @@ The public notebooks preserve the experiments that generated the reported result
 
 Retained notebook outputs correspond to the original executions. A sanitized notebook is **not** presented as freshly re-executed unless explicitly stated.
 
-See `docs/VOXCONVERSE_REPRODUCIBILITY.md` for VoxConverse setup and `docs/VOXCONVERSE_PUBLIC_RELEASE_AUDIT.md` for provenance and limitations. A corresponding Multi-TPC reproducibility note will accompany the audited Multi-TPC notebook release.
+See `docs/VOXCONVERSE_REPRODUCIBILITY.md` for VoxConverse setup. A corresponding Multi-TPC reproducibility note will accompany the audited Multi-TPC notebook release.
 
 ## Data
 
