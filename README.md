@@ -26,17 +26,66 @@ Task C uses one-to-one temporal event matching, with **±0.50 s** as the primary
 
 ## Datasets
 
+The study uses two complementary multiparty datasets. **VoxConverse** provides the main large-scale audio-based evaluation, while **Multi-TPC** adds synchronized multimodal evidence and group-wise robustness analysis.
+
 ### VoxConverse
 
-VoxConverse is used for the main audio-based experiments. The repository preserves the exact frozen development split used by the executed experiments:
+VoxConverse is used for the main audio-based experiments and the detailed analysis of continuous floor-transfer discovery.
 
-- TRAIN: 177 sessions
-- VAL: 39 sessions
-- TEST: official VoxConverse TEST partition
+The executed protocol uses:
 
-The TRAIN and VAL session manifests are provided under `configs/voxconverse/`.
+- **177 TRAIN sessions**
+- **39 VAL sessions**
+- **232 official TEST sessions**
 
-The final continuous-discovery evaluation canonicalizes the TEST reference to **6,348 unique SHIFT events** and evaluates predictions with one-to-one temporal matching.
+The exact frozen TRAIN and VAL manifests are provided under `configs/voxconverse/`. TEST is taken from the official VoxConverse TEST partition rather than from a separately generated split manifest.
+
+<p align="center">
+  <img src="figures/readme/voxconverse_protocol.svg" width="950" alt="VoxConverse evaluation protocol">
+</p>
+
+The VoxConverse event construction distinguishes:
+
+- normal floor transfers;
+- interruptions;
+- backchannels;
+- brief interjections; and
+- continuations / HOLD events.
+
+The final continuous-discovery reference canonicalizes the TEST set to **6,348 unique SHIFT events**. System 1 produces approximately **80,012 TEST candidates**, covering about **6,092 / 6,348** reference transfers within the strict candidate-ceiling analysis.
+
+#### VoxConverse summary
+
+| Analysis | Primary metric | Result |
+|---|---:|---:|
+| Task A — supplied-point classification | Macro-F1 | 0.849 |
+| Task B — automatic-candidate verification | Event F1 | 0.455 |
+| Task C — continuous discovery @ ±0.50 s | Event F1 | 0.552 |
+| Task C — continuous discovery @ ±0.70 s | Event F1 | 0.597 |
+| Task C — continuous discovery @ ±1.00 s | Event F1 | 0.620 |
+
+At the primary ±0.50 s tolerance, Task C achieves **P = 0.536**, **R = 0.569**, and **F1 = 0.552** with **3,609 TP**, **3,122 FP**, and **2,739 FN**.
+
+The VoxConverse analysis also includes:
+
+- candidate-ceiling analysis;
+- silence and speaker-change baselines;
+- augmentation comparisons;
+- component/verifier analysis;
+- event-type diagnostics;
+- speaker-count and overlap diagnostics;
+- incoming-speaker identification; and
+- component-level runtime measurements.
+
+The public VoxConverse release is organized around:
+
+- `voxconverse_main_evaluation.ipynb` — Tasks A/B/C and the main continuous-discovery pipeline;
+- `voxconverse_ablation_no_augmentation.ipynb` — no-augmentation condition;
+- `voxconverse_ablation_synthetic_only.ipynb` — synthetic-only condition;
+- `voxconverse_ablation_waveform_augmentation.ipynb` — timing-preserving waveform augmentation;
+- `voxconverse_silence_and_diagnostics.ipynb` — silence baselines and secondary diagnostic analyses.
+
+The executed VoxConverse pipeline contains bounded contextual/look-ahead evidence in several components. The public notebooks preserve that executed information contract rather than rewriting the historical experiment as strictly past-only. Details are documented in `docs/VOXCONVERSE_REPRODUCIBILITY.md`.
 
 ### Multi-TPC
 
@@ -70,7 +119,7 @@ The seven-group analysis is **robustness evidence rather than a second untouched
 
 The fixed-configuration ablations provide complementary evidence about stage and modality contributions. Individual modality effects are treated as descriptive because their magnitude varies across groups and no ablation comparison survives Holm correction.
 
-The public Multi-TPC release will contain three notebooks:
+The public Multi-TPC release will contain:
 
 - `multitpc_heldout_evaluation.ipynb` — original group-disjoint held-out evaluation;
 - `multitpc_seven_group_evaluation.ipynb` — post-hoc seven-group nested analysis;
@@ -98,11 +147,9 @@ The notebook directories are populated with sanitized copies of the executed res
 
 ## Reproducibility and provenance
 
-The public notebooks are intended to preserve the experiments that generated the reported results. Sanitization is limited to privacy-sensitive paths, notebook metadata, development-only commentary, and public-facing naming where this does not alter computation.
+The public notebooks preserve the experiments that generated the reported results. Sanitization is limited to privacy-sensitive paths, notebook metadata, development-only commentary, and public-facing naming where this does not alter computation.
 
 Retained notebook outputs correspond to the original executions. A sanitized notebook is **not** presented as freshly re-executed unless explicitly stated.
-
-The current VoxConverse implementation uses candidate-centred and bounded contextual evidence in several components. The repository therefore documents the executed information contract directly rather than retroactively rewriting the implementation as strictly past-only.
 
 See `docs/VOXCONVERSE_REPRODUCIBILITY.md` for VoxConverse-specific provenance and limitations. A corresponding Multi-TPC reproducibility note will accompany the audited Multi-TPC notebook release.
 
@@ -112,7 +159,7 @@ Dataset audio and annotations are not redistributed in this repository. Users sh
 
 ## Paper results
 
-The repository will retain the exact executed artifacts used to support the manuscript tables and diagnostic analyses. Numerical values should be traced to the corresponding notebook or frozen result artifact rather than inferred from filenames or development labels.
+The repository will retain the executed artifacts used to support the manuscript tables and diagnostic analyses. Numerical values should be traced to the corresponding notebook or frozen result artifact rather than inferred from filenames or development labels.
 
 ## Citation
 
