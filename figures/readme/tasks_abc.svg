@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="390" viewBox="0 0 1200 390" role="img" aria-labelledby="title desc">
+<title id="title">Task A B C evaluation settings</title>
+<desc id="desc">Three panels distinguish supplied-point classification, automatic-candidate verification, and continuous discovery.</desc>
+<rect width="1200" height="390" rx="24" fill="#f8fafc"/>
+<text x="600" y="42" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" fill="#0f172a">Three evaluation settings</text>
+
+<rect x="40" y="78" width="350" height="260" rx="22" fill="#eff6ff" stroke="#60a5fa" stroke-width="2"/>
+<text x="215" y="118" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" fill="#1d4ed8">Task A</text>
+<text x="215" y="147" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700" fill="#0f172a">Supplied-point classification</text>
+<line x1="82" y1="218" x2="348" y2="218" stroke="#64748b" stroke-width="3"/>
+<circle cx="216" cy="218" r="11" fill="#2563eb"/>
+<text x="216" y="198" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#334155">known decision time</text>
+<text x="215" y="270" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700" fill="#0f172a">SHIFT or HOLD?</text>
+<text x="215" y="302" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#475569">Decision time is given.</text>
+
+<rect x="425" y="78" width="350" height="260" rx="22" fill="#fffbeb" stroke="#f59e0b" stroke-width="2"/>
+<text x="600" y="118" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" fill="#b45309">Task B</text>
+<text x="600" y="147" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700" fill="#0f172a">Automatic-candidate verification</text>
+<line x1="468" y1="218" x2="732" y2="218" stroke="#64748b" stroke-width="3"/>
+<circle cx="525" cy="218" r="8" fill="#f59e0b"/><circle cx="603" cy="218" r="8" fill="#f59e0b"/><circle cx="684" cy="218" r="8" fill="#f59e0b"/>
+<text x="600" y="191" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#334155">System 1 proposals</text>
+<text x="600" y="270" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700" fill="#0f172a">Which candidate is genuine?</text>
+<text x="600" y="302" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#475569">Candidates are automatic.</text>
+
+<rect x="810" y="78" width="350" height="260" rx="22" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="2"/>
+<text x="985" y="118" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" fill="#6d28d9">Task C</text>
+<text x="985" y="147" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700" fill="#0f172a">Continuous discovery</text>
+<path d="M855 218 C885 183,915 248,947 207 C980 166,1017 248,1050 208 C1081 171,1100 224,1120 207" fill="none" stroke="#64748b" stroke-width="3"/>
+<circle cx="1007" cy="207" r="10" fill="#7c3aed"/>
+<text x="985" y="270" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700" fill="#0f172a">Discover + verify + localize</text>
+<text x="985" y="302" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#475569">Primary match tolerance: ±0.50 s</text>
+</svg>
