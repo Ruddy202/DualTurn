@@ -52,7 +52,7 @@ The VoxConverse event construction distinguishes:
 - brief interjections; and
 - continuations / HOLD events.
 
-The final continuous-discovery reference canonicalizes the TEST set to **6,348 unique SHIFT events**. System 1 produces approximately **80,012 TEST candidates**, covering about **6,092 / 6,348** reference transfers within the strict candidate-ceiling analysis.
+The final continuous-discovery reference canonicalizes the TEST set to **6,348 unique SHIFT events**. System 1 produces **80,012 TEST candidates**, which cover **6,092 / 6,348** reference transfers (0.960) at ±0.50 s.
 
 #### VoxConverse summary
 
@@ -99,6 +99,8 @@ The Multi-TPC analysis is intentionally separated into three protocols:
 2. **Post-hoc seven-group nested evaluation** — each group serves once as the outer held-out group, with model/configuration selection restricted to the remaining groups.
 3. **Fixed-configuration ablation analysis** — evaluates stage and modality contributions under a common configuration.
 
+The seven-group and ablation analyses evaluate a revised version of the proposed system, developed after the original held-out evaluation. The two summary rows below therefore come from different system versions and are not repeated measurements of one frozen model.
+
 <p align="center">
   <img src="figures/readme/multitpc_protocol.svg" width="950" alt="Multi-TPC evaluation protocol">
 </p>
@@ -141,36 +143,45 @@ DualTurn/
 │   └── multitpc/
 ├── third_party/
 │   └── muvap/
-├── results/
 ├── figures/
 │   └── readme/
 └── docs/
+    ├── VOXCONVERSE_REPRODUCIBILITY.md
+    └── MULTITPC_REPRODUCIBILITY.md
 ```
 
 `notebooks/voxconverse/` contains the five released VoxConverse notebooks and `notebooks/multitpc/` the three Multi-TPC notebooks. `third_party/muvap/` vendors the exact MuVAP source (MIT licence) used by the Multi-TPC comparators.
 
+## Requirements
+
+The VoxConverse experiments were run with Python 3.11 and PyTorch 2.7 (CUDA 11.8) on a single 12 GB NVIDIA GPU. The main dependencies are:
+
+- `numpy`, `pandas`, `scipy`, `scikit-learn`, `lightgbm`, `matplotlib`, `seaborn`;
+- `torch`, `torchaudio`, `soundfile`;
+- `transformers`, `peft`, `datasets` (WavLM, Qwen3 LoRA);
+- `faster-whisper` (ASR), `pyannote.audio` (diarization), `speechbrain` (ECAPA-TDNN).
+
+Gated Hugging Face models (pyannote) require accepting their terms and setting `HF_TOKEN`. Pretrained weights are downloaded from their upstream sources and are not redistributed.
+
 ## Reproducibility and provenance
 
-The public notebooks preserve the experiments that generated the reported results. Sanitization is limited to privacy-sensitive paths, notebook metadata, and removal of Markdown cells, comments, and docstrings; executable code is unchanged apart from the documented path/split-loading cells.
+The public notebooks preserve the experiments that generated the reported results, and their saved outputs come from the original executions. They were not re-executed after release cleanup.
 
-Retained notebook outputs correspond to the original executions. A sanitized notebook is **not** presented as freshly re-executed unless explicitly stated.
+- **VoxConverse:** notebooks are code-only (Markdown, comments and docstrings removed); executable code is unchanged apart from the path/split-loading cells.
+- **Multi-TPC:** each notebook keeps a title cell and short line comments; identifiers and paths were renamed for readability. The comment cleanup did not change the held-out notebook's compiled code, which its frozen-implementation fingerprint checks.
 
-See `docs/VOXCONVERSE_REPRODUCIBILITY.md` for VoxConverse setup. See `docs/MULTITPC_REPRODUCIBILITY.md` for Multi-TPC setup and provenance.
+Setup, paths and provenance details are in `docs/VOXCONVERSE_REPRODUCIBILITY.md` and `docs/MULTITPC_REPRODUCIBILITY.md`.
 
 ## Data
 
-Dataset audio and annotations are not redistributed in this repository. Users should obtain VoxConverse and Multi-TPC from their respective official sources and configure the dataset and output roots in each notebook's configuration cell (see `docs/VOXCONVERSE_REPRODUCIBILITY.md`).
+Dataset audio and annotations are not redistributed in this repository. Obtain VoxConverse and Multi-TPC from their official sources. Configure the VoxConverse paths in each notebook's configuration cell, and set `MULTITPC_ROOT` for the Multi-TPC notebooks (see the two reproducibility documents).
 
 ## Paper results
 
-The repository will retain the executed artifacts used to support the manuscript tables and diagnostic analyses. Numerical values should be traced to the corresponding notebook or frozen result artifact rather than inferred from filenames or development labels.
+Reported values can be traced to saved outputs in the corresponding notebooks. The exception is the VoxConverse no-augmentation condition: its notebook has no saved outputs, and its results and the paired augmentation bootstrap come from the executed campaign artifacts, which are summarised in `voxconverse_silence_and_diagnostics.ipynb`. Use notebook outputs, not file names or historical development labels, as the source of record.
 
 ## Citation
 
 Citation metadata will be added with the final publication record. Until then, please cite the manuscript by title:
 
 > *Leveraging Dual-Process Theory for Multimodal Multiparty Turn-Taking Prediction Using Acoustic and Linguistic Information*
-
-## Release status
-
-Repository assembly is being completed on the `public-release` branch. The VoxConverse and Multi-TPC notebooks have been added after provenance, privacy, and scientific-consistency review.
