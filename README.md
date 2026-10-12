@@ -121,7 +121,7 @@ The seven-group analysis is **robustness evidence rather than a second untouched
 
 The fixed-configuration ablations provide complementary evidence about stage and modality contributions. Individual modality effects are treated as descriptive because their magnitude varies across groups and no ablation comparison survives Holm correction.
 
-The public Multi-TPC release will contain:
+The public Multi-TPC release contains:
 
 - `multitpc_heldout_evaluation.ipynb` — original group-disjoint held-out evaluation;
 - `multitpc_seven_group_evaluation.ipynb` — post-hoc seven-group nested analysis;
@@ -139,13 +139,15 @@ DualTurn/
 ├── notebooks/
 │   ├── voxconverse/
 │   └── multitpc/
+├── third_party/
+│   └── muvap/
 ├── results/
 ├── figures/
 │   └── readme/
 └── docs/
 ```
 
-`notebooks/voxconverse/` contains the five released VoxConverse notebooks. `notebooks/multitpc/` will be populated after the Multi-TPC release audit.
+`notebooks/voxconverse/` contains the five released VoxConverse notebooks and `notebooks/multitpc/` the three Multi-TPC notebooks. `third_party/muvap/` vendors the exact MuVAP source (MIT licence) used by the Multi-TPC comparators.
 
 ## Reproducibility and provenance
 
@@ -153,7 +155,7 @@ The public notebooks preserve the experiments that generated the reported result
 
 Retained notebook outputs correspond to the original executions. A sanitized notebook is **not** presented as freshly re-executed unless explicitly stated.
 
-See `docs/VOXCONVERSE_REPRODUCIBILITY.md` for VoxConverse setup. A corresponding Multi-TPC reproducibility note will accompany the audited Multi-TPC notebook release.
+See `docs/VOXCONVERSE_REPRODUCIBILITY.md` for VoxConverse setup. See `docs/MULTITPC_REPRODUCIBILITY.md` for Multi-TPC setup and provenance.
 
 ## Data
 
@@ -171,4 +173,4 @@ Citation metadata will be added with the final publication record. Until then, p
 
 ## Release status
 
-Repository assembly is being completed on the `public-release` branch. The VoxConverse notebooks have been added after provenance, privacy, and scientific-consistency review; the Multi-TPC notebooks will follow after their review.
+Repository assembly is being completed on the `public-release` branch. The VoxConverse and Multi-TPC notebooks have been added after provenance, privacy, and scientific-consistency review.
