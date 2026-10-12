@@ -85,7 +85,9 @@ The public VoxConverse release is organized around:
 - `voxconverse_ablation_waveform_augmentation.ipynb` — timing-preserving waveform augmentation;
 - `voxconverse_silence_and_diagnostics.ipynb` — silence baselines and secondary diagnostic analyses.
 
-The executed VoxConverse pipeline contains bounded contextual/look-ahead evidence in several components. The public notebooks preserve that executed information contract rather than rewriting the historical experiment as strictly past-only. Details are documented in `docs/VOXCONVERSE_REPRODUCIBILITY.md`.
+The notebooks contain code cells only. Task labels in code and retained outputs use historical names: Branch 2 = Task A, Branch 2E = Task B, Branch 1 = Task C, and Branch 3 = the future-activity diagnostic.
+
+The executed VoxConverse pipeline contains bounded contextual/look-ahead evidence in several components. The public notebooks preserve that executed information contract rather than rewriting the historical experiment as strictly past-only. Details are documented in `docs/VOXCONVERSE_PUBLIC_RELEASE_AUDIT.md`.
 
 ### Multi-TPC
 
@@ -143,19 +145,19 @@ DualTurn/
 └── docs/
 ```
 
-The notebook directories are populated with sanitized copies of the executed research notebooks after release auditing.
+`notebooks/voxconverse/` contains the five released VoxConverse notebooks. `notebooks/multitpc/` will be populated after the Multi-TPC release audit.
 
 ## Reproducibility and provenance
 
-The public notebooks preserve the experiments that generated the reported results. Sanitization is limited to privacy-sensitive paths, notebook metadata, development-only commentary, and public-facing naming where this does not alter computation.
+The public notebooks preserve the experiments that generated the reported results. Sanitization is limited to privacy-sensitive paths, notebook metadata, and removal of Markdown cells, comments, and docstrings; executable code is unchanged apart from the documented path/split-loading cells.
 
 Retained notebook outputs correspond to the original executions. A sanitized notebook is **not** presented as freshly re-executed unless explicitly stated.
 
-See `docs/VOXCONVERSE_REPRODUCIBILITY.md` for VoxConverse-specific provenance and limitations. A corresponding Multi-TPC reproducibility note will accompany the audited Multi-TPC notebook release.
+See `docs/VOXCONVERSE_REPRODUCIBILITY.md` for VoxConverse setup and `docs/VOXCONVERSE_PUBLIC_RELEASE_AUDIT.md` for provenance and limitations. A corresponding Multi-TPC reproducibility note will accompany the audited Multi-TPC notebook release.
 
 ## Data
 
-Dataset audio and annotations are not redistributed in this repository. Users should obtain VoxConverse and Multi-TPC from their respective official sources and arrange them according to the paths documented with each notebook.
+Dataset audio and annotations are not redistributed in this repository. Users should obtain VoxConverse and Multi-TPC from their respective official sources and configure the dataset and output roots in each notebook's configuration cell (see `docs/VOXCONVERSE_REPRODUCIBILITY.md`).
 
 ## Paper results
 
@@ -169,4 +171,4 @@ Citation metadata will be added with the final publication record. Until then, p
 
 ## Release status
 
-Repository assembly is currently being completed on the `public-release` branch. Experimental notebooks are added only after provenance, privacy, and scientific-consistency review.
+Repository assembly is being completed on the `public-release` branch. The VoxConverse notebooks have been added after provenance, privacy, and scientific-consistency review; the Multi-TPC notebooks will follow after their review.

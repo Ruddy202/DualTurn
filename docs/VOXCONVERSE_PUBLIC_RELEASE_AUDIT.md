@@ -4,7 +4,7 @@
 
 **GREEN for public release as a faithful, sanitized record of the executed VoxConverse experiments.**
 
-This verdict concerns repository publication of the historical executed artifacts. It does **not** convert the executed pipeline into a strictly causal/past-only system. The public notebooks disclose that bounded look-ahead/context is present in the historical implementation.
+This verdict concerns repository publication of the historical executed artifacts. It does **not** convert the executed pipeline into a strictly causal/past-only system. `README.md` and this document disclose that bounded look-ahead/context is present in the historical implementation.
 
 ## Files verified
 
@@ -25,6 +25,19 @@ All other code cells are unchanged relative to the corresponding original source
 For the silence/diagnostics notebook, the only executable-code change is the path/configuration cell used to resolve repository-relative data and result locations. All analysis code cells are otherwise unchanged.
 
 The notebooks were not re-executed after sanitization.
+
+## Notebook presentation cleanup
+
+After the equivalence check above, the public notebooks were reduced to code cells only:
+
+- all Markdown cells were removed;
+- all code comments and docstrings were removed, including development-history notes, legacy cell numbering, and commented-out code;
+- each remaining code cell keeps at most a one-line descriptive title;
+- two cells in `voxconverse_main_evaluation.ipynb` that contained only commented-out code were removed.
+
+Every remaining code cell was verified to have an identical Python abstract syntax tree (ignoring docstrings) to its approved counterpart, and saved outputs and execution counts are unchanged. This cleanup does not alter any computation.
+
+Provenance notices, the task mapping, and the information-contract disclosure that previously appeared in notebook Markdown are now documented in `README.md` and in this document.
 
 ## Frozen split
 
@@ -56,7 +69,7 @@ Key retained anchors include:
 - silence + automatic speaker change F1 ≈ 0.3417
 - System-1 component RTF ≈ 0.232
 - temporal-verifier latency ≈ 0.011286 ms/candidate
-- manual event-label audit status: 0/300 reviewed
+- manual event-label audit status in the retained silence/diagnostics output: 0/300 reviewed (this output predates the completed human review; see below)
 
 The no-augmentation source notebook contains no saved outputs. The public copy preserves that fact and does not fabricate output cells; aggregate no-augmentation results are supported by the executed campaign artifacts.
 
@@ -69,7 +82,7 @@ Public task mapping:
 - original Branch 1 -> Task C
 - original Branch 3 -> future-activity diagnostic
 
-Legacy internal artifact keys may remain where changing them would risk provenance or artifact lookup.
+Legacy internal artifact keys, variable names, and printed messages (for example `branch2e`, `BRANCH2_*`, `PAPER_READY_PROTOCOL`, and references to historical cell numbers) remain where changing them would alter code or risk provenance or artifact lookup. The mapping above is the public interpretation of those labels.
 
 The public `waveform_augmentation` notebook corresponds to the original `diffusion_only` condition. The executed condition uses timing-preserving random gain, Gaussian noise, and optional background/diffusion-bed mixing; it does not use speed perturbation or temporal shifting.
 
@@ -87,15 +100,15 @@ The original main Task-C confidence interval uses 1,000 session-level bootstrap 
 
 ## Privacy and integrity
 
-A final scan over notebook source, Markdown, outputs, and metadata found no personal filesystem paths, local username, email addresses, private IPv4 addresses, or common credential/token patterns.
+A final scan over notebook source, outputs, and metadata (the public notebooks contain no Markdown cells) found no personal filesystem paths, local username, email addresses, private IPv4 addresses, or common credential/token patterns.
 
 All five notebooks parse as valid notebook JSON and all Python code cells compile syntactically.
 
 ## Remaining limitations
 
-- Historical internal run identifiers remain in some cache/artifact names and retained outputs.
+- Historical internal run identifiers remain in some cache/artifact names, code identifiers, and retained outputs.
 - Historical cache-resume behavior included cases where temporal caches were loaded despite metadata mismatch.
-- The human 300-event audit remains incomplete.
+- The 300-event human label audit has been completed and is reported in the manuscript. Its agreement statistics are not computed by the released notebooks; the retained silence/diagnostics output still shows the pre-review status (0/300).
 - Runtime figures are component-level, not whole-pipeline uncached real-time measurements.
 - The main Task-C bootstrap and augmentation bootstrap use different replicate counts.
 - The release documents the executed bounded-context pipeline rather than claiming strict past-only causality.
