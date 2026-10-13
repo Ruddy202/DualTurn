@@ -1,75 +1,104 @@
-# VoxConverse reproducibility
+# Reproducing the VoxConverse experiments
 
-This document provides the practical information needed to reproduce the VoxConverse experiments released with this repository.
+This guide covers setup, run order and outputs for the five VoxConverse notebooks. For installation, see the [README](../README.md#installation).
 
-## Files
+## 1. Data
+
+Download VoxConverse from the [official release](https://github.com/joonson/voxconverse) and arrange it as follows. These paths are the defaults; you can change them with the environment variables in section 3.
 
 ```text
-notebooks/voxconverse/
-├── voxconverse_main_evaluation.ipynb
-├── voxconverse_ablation_no_augmentation.ipynb
-├── voxconverse_ablation_synthetic_only.ipynb
-├── voxconverse_ablation_waveform_augmentation.ipynb
-└── voxconverse_silence_and_diagnostics.ipynb
-
-configs/voxconverse/
-├── train_sessions.json
-└── val_sessions.json
+data/voxconverse/
+├── voxconverse_dev_wav/audio/     # DEV .wav files (216 sessions)
+├── voxconverse_test_wav/audio/    # TEST .wav files (232 sessions)
+├── labels/dev/                    # DEV .rttm files
+├── labels/test/                   # TEST .rttm files
+└── diffusion_beds_16k/            # background beds (.wav, 16 kHz), optional
 ```
 
-The main notebook contains the full-condition Task A/B/C experiment. The remaining notebooks provide the augmentation conditions and secondary diagnostics reported in the paper.
+`diffusion_beds_16k/` holds the 96 background recordings mixed in by waveform augmentation. They are not part of VoxConverse and are not included here. If the folder is empty or missing, the notebooks skip bed mixing and print a warning. Random gain and Gaussian noise are still applied.
 
-## Dataset and split
+## 2. Split
 
-Obtain VoxConverse from its official source. Dataset audio and annotations are not redistributed in this repository.
+| Partition | Sessions | Source |
+|---|---:|---|
+| TRAIN | 177 | `configs/voxconverse/train_sessions.json` |
+| VAL | 39 | `configs/voxconverse/val_sessions.json` |
+| TEST | 232 | Official VoxConverse TEST partition |
 
-Use the supplied frozen development manifests:
+TRAIN and VAL are disjoint and together cover the 216 DEV sessions. The notebooks read these files. Do not regenerate the split.
 
-- TRAIN: 177 sessions
-- VAL: 39 sessions
-- TEST: official VoxConverse TEST partition
+## 3. Configuration
 
-`train_sessions.json` and `val_sessions.json` are disjoint and together contain the 216 DEV sessions used by the experiments.
+Every notebook resolves its paths from the repository root. Override them with environment variables before starting Jupyter.
 
-Do not regenerate the TRAIN/VAL split.
+| Variable | Default | Purpose |
+|---|---|---|
+| `PROJECT_ROOT` | repository root | Base for all relative paths |
+| `VOX_ROOT` | `data/voxconverse` | Dataset root (layout above) |
+| `VOX_SPLITS_DIR` | `configs/voxconverse` | TRAIN/VAL manifests |
+| `VOX_RUN_ROOT` | `results/voxconverse/18thAug_VAP_RRFAP_TEXT_META_CONFIRMER_PAPER_READY_v2` | Output directory of the main run |
+| `VOX_BASE_ASSET_RUN_ROOT` | `results/voxconverse/18thAug_VAP_RRFAP_TEXT_META_CONFIRMER_v1` | Optional earlier run. If it exists, its synthetic dialogues, augmented audio and ASR/pyannote/ECAPA caches are reused read-only; otherwise they are generated |
+| `HF_TOKEN` (or `HUGGINGFACE_HUB_TOKEN`) | — | Needed for the gated pyannote models |
 
-## Evaluation settings
+The run-directory names are fixed in the code. The diagnostics notebook finds the ablation runs by appending a suffix to the main run name, so keep the defaults unless you change all five notebooks consistently.
 
-The released evaluation uses:
+Additional variables for `voxconverse_silence_and_diagnostics.ipynb`:
 
-- **Task A:** supplied-point SHIFT/HOLD classification;
-- **Task B:** automatic-candidate verification;
-- **Task C:** continuous floor-transfer discovery.
+| Variable | Default | Purpose |
+|---|---|---|
+| `VOX_RUNS_DIR` | `results/voxconverse` | Parent directory of the four runs |
+| `VOX_ANALYSIS_RUN_ROOT` | main run directory | Run to analyse |
+| `VOX_RTTM_TEST` | `$VOX_ROOT/labels/test` | TEST RTTM files |
+| `VOX_AUDIO_TEST` | `$VOX_ROOT/voxconverse_test_wav/audio` | TEST audio |
+| `VOX_AUG_CAMPAIGN_RESULT_DIR` | `results/voxconverse/augmentation_ablation_campaign` | Optional precomputed augmentation tables; recomputed from the four runs if absent |
+| `VOX_RUN_TRUE_TIMING_BENCHMARK` | `1` | Run the component runtime benchmark |
+| `VOX_EXPORT_AUDIT_AUDIO` | `1` | Export audio snippets for the manual label audit |
+| `VOX_MANUAL_AUDIT_TOTAL` | `300` | Number of events sampled for the manual audit |
 
-For Task C:
+## 4. Run order
 
-- primary matching tolerance: ±0.50 s;
-- sensitivity tolerances: ±0.70 s and ±1.00 s;
-- matching: one-to-one;
-- canonical TEST reference: 6,348 unique SHIFT events.
+| Step | Notebook | Writes to `results/voxconverse/` |
+|---|---|---|
+| 1 | `voxconverse_main_evaluation.ipynb` | `<run>/` |
+| 2 | `voxconverse_ablation_no_augmentation.ipynb` | `<run>__aug_ablation_no_aug/` |
+| 3 | `voxconverse_ablation_synthetic_only.ipynb` | `<run>__aug_ablation_synthetic_only/` |
+| 4 | `voxconverse_ablation_waveform_augmentation.ipynb` | `<run>__aug_ablation_diffusion_only/` |
+| 5 | `voxconverse_silence_and_diagnostics.ipynb` | `<run>/paper_analysis_voxconverse/` |
 
-## Augmentation conditions
+`<run>` is `18thAug_VAP_RRFAP_TEXT_META_CONFIRMER_PAPER_READY_v2`. Steps 2–4 can run in any order after step 1. Step 5 needs all four runs.
 
-The public notebooks cover:
+Each run directory contains trained models (`models/`), TEST metrics (`eval/`) and feature caches. `eval/` includes `final_test_metrics_per_session.csv`, which step 5 uses for the paired bootstrap.
 
-- no augmentation;
-- synthetic-only augmentation;
-- waveform augmentation;
-- full augmentation in the main evaluation notebook.
+## 5. Conditions
 
-The waveform-augmentation condition uses timing-preserving random gain, Gaussian noise, and optional background-bed mixing. Speed perturbation and temporal shifting are not used in the released experiment.
+| Notebook | Real dialogue | Synthetic dialogue | Waveform augmentation |
+|---|:---:|:---:|:---:|
+| Main evaluation (full) | ✓ | ✓ | ✓ |
+| No augmentation | ✓ | | |
+| Synthetic only | ✓ | ✓ | |
+| Waveform augmentation | ✓ | | ✓ |
 
-## Bootstrap settings
+Waveform augmentation uses random gain, Gaussian noise and background-bed mixing. All three keep the original timing; the experiments do not use speed perturbation or time shifting.
 
-- main Task-C confidence interval: 1,000 session-level bootstrap replicates;
-- paired augmentation comparison: 2,000 paired session-level bootstrap replicates.
+## 6. Evaluation settings
 
-## Running the notebooks
+- Task C matches events one-to-one at ±0.50 s (also used for candidate labelling and operating-point selection), ±0.70 s and ±1.00 s.
+- The TEST reference contains 6,348 SHIFT events.
+- Task C confidence intervals use 1,000 session-level bootstrap replicates.
+- The augmentation comparison uses 2,000 paired session-level bootstrap replicates.
 
-Configure the dataset and output roots in the notebook configuration cell, then use the supplied TRAIN/VAL manifests.
+## 7. Models
 
-The public notebooks retain outputs from the original executions and were not re-executed after repository sanitization.
+| Model | Source |
+|---|---|
+| WavLM | `microsoft/wavlm-large` (falls back to `microsoft/wavlm-base-plus` if the large model cannot be loaded) |
+| Language model | `Qwen/Qwen3-1.7B` with a LoRA adapter trained in the notebook |
+| ASR | `faster-whisper` `medium` |
+| Diarization | `pyannote/speaker-diarization-3.1` (gated), `pyannote/segmentation-3.0` (gated) |
+| Speaker embeddings | `speechbrain/spkrec-ecapa-voxceleb` |
 
-## Data redistribution
+All weights are downloaded from their upstream sources on first use.
 
-VoxConverse audio and annotation files are not included in this repository. Users must obtain the dataset separately from its official distribution.
+## 8. Hardware
+
+The original runs used one NVIDIA RTX 4070 (12 GB) with Python 3.11.15 and PyTorch 2.7.0+cu118.

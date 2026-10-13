@@ -1,0 +1,31 @@
+# Python 3.11. Install PyTorch first for CUDA 11.8:
+#   pip install torch==2.7.0 torchaudio==2.7.0 --index-url https://download.pytorch.org/whl/cu118
+torch==2.7.0
+torchaudio==2.7.0
+
+numpy
+pandas
+scipy
+scikit-learn
+lightgbm
+joblib
+matplotlib
+seaborn
+tqdm
+pyyaml
+einops
+
+soundfile
+librosa
+
+transformers
+peft
+datasets
+huggingface_hub
+
+faster-whisper
+pyannote.audio>=3.1
+speechbrain
+
+jupyter
+ipython
