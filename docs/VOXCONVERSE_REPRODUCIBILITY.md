@@ -4,7 +4,26 @@ This guide covers setup, run order and outputs for the five VoxConverse notebook
 
 ## 1. Data
 
-Download VoxConverse from the [official release](https://github.com/joonson/voxconverse) and arrange it as follows. These paths are the defaults; you can change them with the environment variables in section 3.
+VoxConverse is distributed by its authors:
+
+- RTTM annotations: https://github.com/joonson/voxconverse (use the current v0.3 annotations on the master branch, which include corrected TEST labels)
+- DEV audio: https://www.robots.ox.ac.uk/~vgg/data/voxconverse/data/voxconverse_dev_wav.zip
+- TEST audio: https://www.robots.ox.ac.uk/~vgg/data/voxconverse/data/voxconverse_test_wav.zip
+
+From the repository root, the following commands build the default layout:
+
+```bash
+mkdir -p data/voxconverse/voxconverse_dev_wav/audio data/voxconverse/voxconverse_test_wav/audio data/voxconverse/labels
+wget https://www.robots.ox.ac.uk/~vgg/data/voxconverse/data/voxconverse_dev_wav.zip
+wget https://www.robots.ox.ac.uk/~vgg/data/voxconverse/data/voxconverse_test_wav.zip
+unzip -q voxconverse_dev_wav.zip -d data/voxconverse/voxconverse_dev_wav/audio
+unzip -q voxconverse_test_wav.zip -d data/voxconverse/voxconverse_test_wav/audio
+git clone https://github.com/joonson/voxconverse.git /tmp/voxconverse
+cp -r /tmp/voxconverse/dev  data/voxconverse/labels/dev
+cp -r /tmp/voxconverse/test data/voxconverse/labels/test
+```
+
+The notebooks search these folders recursively, so an extra subfolder level from the zip files does no harm.
 
 ```text
 data/voxconverse/
@@ -14,6 +33,8 @@ data/voxconverse/
 ├── labels/test/                   # TEST .rttm files
 └── diffusion_beds_16k/            # background beds (.wav, 16 kHz), optional
 ```
+
+These paths are the defaults; you can change them with the environment variables in section 4.
 
 `diffusion_beds_16k/` holds the 96 background recordings mixed in by waveform augmentation. They are not part of VoxConverse and are not included here. If the folder is empty or missing, the notebooks skip bed mixing and print a warning. Random gain and Gaussian noise are still applied.
 
@@ -27,7 +48,39 @@ data/voxconverse/
 
 TRAIN and VAL are disjoint and together cover the 216 DEV sessions. The notebooks read these files. Do not regenerate the split.
 
-## 3. Configuration
+## 3. Turn-taking events
+
+VoxConverse is a diarization corpus: its RTTM files say who spoke when, but contain no turn-taking labels. The main notebook derives events from each pair of adjacent speaker segments.
+
+```mermaid
+flowchart LR
+    A[Audio + RTTM diarization] --> B[Speaker-labelled speech intervals]
+    B --> C[Adjacent-turn analysis]
+    C --> D[Speaker identity + gap/overlap + incoming duration]
+    D --> E{Turn-taking event}
+    E --> NTT[NTT<br/>SHIFT]
+    E --> ITT[ITT<br/>SHIFT]
+    E --> BC[Backchannel<br/>HOLD]
+    E --> BI[Brief interjection<br/>HOLD]
+    E --> NA[Continuation / other<br/>HOLD]
+    NTT --> F[Task A / B / C evaluation]
+    ITT --> F
+    BC --> F
+    BI --> F
+    NA --> F
+```
+
+| Adjacent-segment pattern | Event | Label | Event time |
+|---|---|---|---|
+| Same speaker continues | NA / continuation | HOLD | previous segment end |
+| Different speaker, overlap ≥ 0.06 s, incoming duration ≤ 0.50 s | Backchannel (BC) | HOLD | incoming segment start |
+| Different speaker, overlap ≥ 0.06 s, incoming duration > 0.50 s | Interruption turn transfer (ITT) | SHIFT | incoming segment start |
+| Different speaker, no substantial overlap, incoming duration ≤ 0.50 s | Brief interjection (BI) | HOLD | incoming segment start |
+| Different speaker, no substantial overlap, incoming duration > 0.50 s | Normal turn transfer (NTT) | SHIFT | previous segment end |
+
+Events with missing timestamps are dropped, event times are canonicalized, and duplicate events at the same session time are removed. On TEST this gives 6,348 SHIFT events.
+
+## 4. Configuration
 
 Every notebook resolves its paths from the repository root. Override them with environment variables before starting Jupyter.
 
@@ -55,7 +108,7 @@ Additional variables for `voxconverse_silence_and_diagnostics.ipynb`:
 | `VOX_EXPORT_AUDIT_AUDIO` | `1` | Export audio snippets for the manual label audit |
 | `VOX_MANUAL_AUDIT_TOTAL` | `300` | Number of events sampled for the manual audit |
 
-## 4. Run order
+## 5. Run order
 
 | Step | Notebook | Writes to `results/voxconverse/` |
 |---|---|---|
@@ -69,7 +122,7 @@ Additional variables for `voxconverse_silence_and_diagnostics.ipynb`:
 
 Each run directory contains trained models (`models/`), TEST metrics (`eval/`) and feature caches. `eval/` includes `final_test_metrics_per_session.csv`, which step 5 uses for the paired bootstrap.
 
-## 5. Conditions
+## 6. Conditions
 
 | Notebook | Real dialogue | Synthetic dialogue | Waveform augmentation |
 |---|:---:|:---:|:---:|
@@ -80,14 +133,14 @@ Each run directory contains trained models (`models/`), TEST metrics (`eval/`) a
 
 Waveform augmentation uses random gain, Gaussian noise and background-bed mixing. All three keep the original timing; the experiments do not use speed perturbation or time shifting.
 
-## 6. Evaluation settings
+## 7. Evaluation settings
 
 - Task C matches events one-to-one at ±0.50 s (also used for candidate labelling and operating-point selection), ±0.70 s and ±1.00 s.
 - The TEST reference contains 6,348 SHIFT events.
 - Task C confidence intervals use 1,000 session-level bootstrap replicates.
 - The augmentation comparison uses 2,000 paired session-level bootstrap replicates.
 
-## 7. Models
+## 8. Models
 
 | Model | Source |
 |---|---|
@@ -99,6 +152,6 @@ Waveform augmentation uses random gain, Gaussian noise and background-bed mixing
 
 All weights are downloaded from their upstream sources on first use.
 
-## 8. Hardware
+## 9. Hardware
 
 The original runs used one NVIDIA RTX 4070 (12 GB) with Python 3.11.15 and PyTorch 2.7.0+cu118.

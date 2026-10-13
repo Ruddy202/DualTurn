@@ -4,10 +4,16 @@ This guide covers setup, run order and outputs for the three Multi-TPC notebooks
 
 ## 1. Data
 
-Obtain Multi-TPC from its authors and point the notebooks at the corpus root:
+Multi-TPC is publicly available:
+
+- Dataset (Zenodo): https://doi.org/10.5281/zenodo.17935560
+- Authors' code repository: https://github.com/MCMartinLee/Multi-TPC
+- Project page: https://mcmartinlee.github.io/projects/MultiTPC
+
+Download and extract the Zenodo archive, then point the notebooks at the extracted root:
 
 ```bash
-export MULTITPC_ROOT=/path/to/Multi-TPC
+export MULTITPC_ROOT=/absolute/path/to/Multi-TPC
 ```
 
 The loaders find each session's participant audio, participant-state/gaze/backchannel annotations, word alignments, prosody, motion and gaze streams under this root. They check every stream and stop with a list of missing files if any are absent.

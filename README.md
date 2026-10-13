@@ -113,8 +113,8 @@ export HF_TOKEN=<your Hugging Face token>
 
 The datasets are not redistributed here.
 
-- **VoxConverse**: audio and RTTM labels from the [official release](https://github.com/joonson/voxconverse). Use the DEV partition for TRAIN/VAL and the official TEST partition for TEST.
-- **Multi-TPC**: obtain the corpus from its authors. The experiments use 23 complete sessions from seven triadic groups.
+- **VoxConverse**: [RTTM annotations (v0.3)](https://github.com/joonson/voxconverse), [DEV audio](https://www.robots.ox.ac.uk/~vgg/data/voxconverse/data/voxconverse_dev_wav.zip), [TEST audio](https://www.robots.ox.ac.uk/~vgg/data/voxconverse/data/voxconverse_test_wav.zip). DEV is split into TRAIN/VAL; the official TEST partition is used for TEST.
+- **Multi-TPC**: [Zenodo (doi:10.5281/zenodo.17935560)](https://doi.org/10.5281/zenodo.17935560). The experiments use 23 complete sessions from seven triadic groups.
 
 Default VoxConverse layout (relative to the repository root):
 
@@ -127,7 +127,7 @@ data/voxconverse/
 └── diffusion_beds_16k/            # background beds for waveform augmentation (optional)
 ```
 
-For Multi-TPC, point `MULTITPC_ROOT` at the corpus root.
+Download commands that produce this layout are in [`docs/VOXCONVERSE_REPRODUCIBILITY.md`](docs/VOXCONVERSE_REPRODUCIBILITY.md#1-data). For Multi-TPC, point `MULTITPC_ROOT` at the extracted Zenodo archive.
 
 ## Reproducing the VoxConverse experiments
 
@@ -214,4 +214,4 @@ The BibTeX entry will be added once the paper is published. Until then, cite the
 
 ## Acknowledgements
 
-The Multi-TPC comparator builds on [MuVAP](https://github.com/Haotian-Qi/MuVAP) (MIT licence), vendored in `third_party/muvap/`. We thank the creators of VoxConverse and Multi-TPC for making their data available.
+The Multi-TPC comparator builds on [MuVAP](https://github.com/Haotian-Qi/MuVAP) (MIT licence), vendored in `third_party/muvap/`. We thank the creators of [VoxConverse](https://github.com/joonson/voxconverse) and [Multi-TPC](https://github.com/MCMartinLee/Multi-TPC) for making their data available.
