@@ -33,6 +33,40 @@ Use the supplied frozen development manifests:
 
 Do not regenerate the TRAIN/VAL split.
 
+## How VoxConverse is repurposed for turn-taking
+
+VoxConverse is originally a speaker-diarization corpus: its RTTM files describe **who spoke when**, but they do not provide turn-taking labels. The main notebook converts adjacent speaker segments into the event classes used by this study.
+
+```mermaid
+flowchart LR
+    A[Audio + RTTM diarization] --> B[Speaker-labelled speech intervals]
+    B --> C[Adjacent-turn analysis]
+    C --> D[Speaker identity + gap/overlap + incoming duration]
+    D --> E{Turn-taking event}
+    E --> NTT[NTT<br/>SHIFT]
+    E --> ITT[ITT<br/>SHIFT]
+    E --> BC[Backchannel<br/>HOLD]
+    E --> BI[Brief interjection<br/>HOLD]
+    E --> NA[Continuation / other<br/>HOLD]
+    NTT --> F[Task A / B / C evaluation]
+    ITT --> F
+    BC --> F
+    BI --> F
+    NA --> F
+```
+
+The primary conversion rules are:
+
+| Adjacent-segment pattern | Derived event | Label | Event time |
+|---|---|---|---|
+| Same speaker continues | NA / continuation | HOLD | previous segment end |
+| Different speaker, overlap ≥ 0.06 s, incoming duration ≤ 0.50 s | Backchannel (BC) | HOLD | incoming segment start |
+| Different speaker, overlap ≥ 0.06 s, incoming duration > 0.50 s | Interruption turn transfer (ITT) | SHIFT | incoming segment start |
+| Different speaker, no substantial overlap, incoming duration ≤ 0.50 s | Brief interjection (BI) | HOLD | incoming segment start |
+| Different speaker, no substantial overlap, incoming duration > 0.50 s | Normal turn transfer (NTT) | SHIFT | previous segment end |
+
+After event construction, missing timestamps are removed, event times are canonicalized, and duplicate session-time events are removed before evaluation.
+
 ## Evaluation settings
 
 The released evaluation uses:
