@@ -15,13 +15,23 @@ notebooks/multitpc/
 - `multitpc_seven_group_evaluation.ipynb` — seven-group nested evaluation, with each group used once as the outer held-out group.
 - `multitpc_ablation.ipynb` — fixed-configuration stage/modality ablations under the seven-group protocol.
 
-## Dataset setup
+## Dataset acquisition
 
-Obtain Multi-TPC separately and set:
+The official Multi-TPC dataset is publicly available from Zenodo:
+
+- Dataset: https://doi.org/10.5281/zenodo.17935560
+- Official project/code repository: https://github.com/MCMartinLee/Multi-TPC
+- Project page: https://mcmartinlee.github.io/projects/MultiTPC
+
+Download and extract the Zenodo dataset, then point the notebooks to the extracted dataset root:
 
 ```bash
-export MULTITPC_ROOT=/path/to/Multi-TPC
+export MULTITPC_ROOT=/absolute/path/to/Multi-TPC
 ```
+
+The official repository also contains the dataset authors' preprocessing and analysis code for the audio, motion, gaze, and related streams.
+
+## Dataset setup
 
 The notebooks discover the dataset streams used by the experiment, including audio, participant-state/gaze/backchannel annotations, word alignment, prosody, motion, and gaze data.
 
