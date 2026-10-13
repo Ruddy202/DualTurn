@@ -19,9 +19,31 @@ configs/voxconverse/
 
 The main notebook contains the full-condition Task A/B/C experiment. The remaining notebooks provide the augmentation conditions and secondary diagnostics reported in the paper.
 
-## Dataset and split
+## Dataset acquisition
 
-Obtain VoxConverse from its official source. Dataset audio and annotations are not redistributed in this repository.
+VoxConverse is available from the official repository:
+
+- Repository and RTTM annotations: https://github.com/joonson/voxconverse
+- DEV audio: https://www.robots.ox.ac.uk/~vgg/data/voxconverse/data/voxconverse_dev_wav.zip
+- TEST audio: https://www.robots.ox.ac.uk/~vgg/data/voxconverse/data/voxconverse_test_wav.zip
+
+Use the current **v0.3** RTTM annotations from the repository master branch, which include corrected TEST annotations.
+
+One convenient setup is:
+
+```bash
+git clone https://github.com/joonson/voxconverse.git
+
+wget https://www.robots.ox.ac.uk/~vgg/data/voxconverse/data/voxconverse_dev_wav.zip
+wget https://www.robots.ox.ac.uk/~vgg/data/voxconverse/data/voxconverse_test_wav.zip
+
+unzip voxconverse_dev_wav.zip
+unzip voxconverse_test_wav.zip
+```
+
+The notebooks need access to the DEV/TEST WAV files and the corresponding RTTM annotations. Dataset audio and annotations are not redistributed in this repository.
+
+## Dataset and split
 
 Use the supplied frozen development manifests:
 
@@ -106,4 +128,4 @@ The public notebooks retain outputs from the original executions and were not re
 
 ## Data redistribution
 
-VoxConverse audio and annotation files are not included in this repository. Users must obtain the dataset separately from its official distribution.
+VoxConverse files are not included in this repository. Obtain the dataset from the official sources listed above.
