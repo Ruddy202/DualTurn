@@ -22,6 +22,7 @@ DualTurn predicts floor transfers in multiparty conversation in two stages. A fa
 - [Experimental notes](#experimental-notes)
 - [Repository layout](#repository-layout)
 - [Citation](#citation)
+- [License](#license)
 - [Acknowledgements](#acknowledgements)
 
 ## Evaluation tasks
@@ -191,6 +192,7 @@ No TEST labels enter any feature or prediction.
 
 ```text
 DualTurn/
+├── LICENSE
 ├── README.md
 ├── requirements.txt
 ├── configs/voxconverse/          # fixed TRAIN/VAL session lists
@@ -211,6 +213,10 @@ DualTurn/
 The BibTeX entry will be added once the paper is published. Until then, cite the paper by title:
 
 > *Leveraging Dual-Process Theory for Multimodal Multiparty Turn-Taking Prediction Using Acoustic and Linguistic Information.*
+
+## License
+
+The code in this repository is released under the [MIT License](LICENSE). The vendored MuVAP source in `third_party/muvap/` keeps its own MIT licence. The VoxConverse and Multi-TPC datasets and the pretrained models are covered by their own licences and are not included here.
 
 ## Acknowledgements
 
