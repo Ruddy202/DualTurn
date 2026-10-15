@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DualTurn</title>
+<meta name="description" content="DualTurn: dual-process multimodal turn-taking prediction for multiparty conversation. Interactive examples, results and code.">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;7..72,600&family=Public+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column (~760px) with a wide band for the interactive timeline; speaker lanes are the recurring motif. */
+:root {
+  --bg: #F5F7FA; --surface: #FFFFFF; --fg: #18202B; --muted: #5B6675; --line: #DCE2EA;
+  --accent: #2F5DAA; --accent-soft: #E3EBF7; --ok: #2E8B57; --bad: #C2413B; --ref: #18202B; --cand: #9AA6B6;
+  --s0: #1F8A84; --s1: #C27A14; --s2: #7A5BC4; --s3: #2F7BBF; --s4: #B04A6F; --s5: #5E8A2E; --s6: #8A6A3E; --s7: #4C5FA8;
+  --font-display: "Literata", Georgia, "Times New Roman", serif;
+  --font-body: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E131A; --surface: #151C25; --fg: #E6EBF2; --muted: #94A0AF; --line: #273241;
+    --accent: #7FA6E8; --accent-soft: #1C2A40; --ok: #5CC98A; --bad: #EF7A72; --ref: #E6EBF2; --cand: #5D6B7D;
+    --s0: #4CC2BA; --s1: #E3A445; --s2: #A68BEA; --s3: #6AAEE8; --s4: #E07FA2; --s5: #9BC765; --s6: #C9A273; --s7: #8C9CE6;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E131A; --surface: #151C25; --fg: #E6EBF2; --muted: #94A0AF; --line: #273241;
+  --accent: #7FA6E8; --accent-soft: #1C2A40; --ok: #5CC98A; --bad: #EF7A72; --ref: #E6EBF2; --cand: #5D6B7D;
+  --s0: #4CC2BA; --s1: #E3A445; --s2: #A68BEA; --s3: #6AAEE8; --s4: #E07FA2; --s5: #9BC765; --s6: #C9A273; --s7: #8C9CE6;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0;
+}
+a { color: var(--accent); }
+a:focus-visible, button:focus-visible, audio:focus-visible, svg:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.col { max-width: 760px; margin: 0 auto; }
+.wide { max-width: 1080px; margin: 0 auto; }
+
+header { padding-block: 56px 32px; display: grid; gap: 18px; }
+.venue { font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(27px, 4.2vw, 40px); line-height: 1.2; margin: 0; text-wrap: balance; }
+h1 .name { color: var(--accent); }
+.authors { font-size: 15.5px; }
+.affil { color: var(--muted); font-size: 13.5px; margin-top: 4px; }
+.links { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); text-decoration: none; font-size: 14px; font-weight: 500; }
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+.btn.primary { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.btn.primary:hover { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; }
+.btn .soon { font-family: var(--font-mono); font-size: 11px; opacity: .75; }
+
+.demo { background: var(--surface); border-block: 1px solid var(--line); padding-block: 28px 30px;
+  margin-left: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); margin-right: calc(-1 * max(16px, env(safe-area-inset-right, 0px)));
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.demo-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 10px 24px; margin-bottom: 16px; }
+.demo-head h2 { margin: 0; }
+.tag { font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; background: var(--accent-soft); color: var(--accent); }
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.tab { font: 500 13.5px var(--font-body); text-align: left; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); cursor: pointer; display: grid; gap: 1px; }
+.tab .id { font-family: var(--font-mono); font-size: 13px; }
+.tab .sub { font-size: 11.5px; color: var(--muted); }
+.tab[aria-selected="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.tab[aria-selected="true"] .id { color: var(--accent); }
+
+.session-note { font-size: 14.5px; margin-bottom: 12px; max-width: 72ch; }
+.row { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; margin-bottom: 12px; }
+.row audio { flex: 1 1 320px; min-width: 0; height: 40px; }
+.ctrl { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.ctrl .lbl { font-size: 13px; font-weight: 600; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg button { font: 500 13px var(--font-body); padding: 6px 11px; border: 0; background: transparent; color: var(--fg); cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+
+.tl-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); }
+.tl-wrap svg { display: block; width: 100%; min-width: 700px; height: auto; }
+#overview { cursor: pointer; }
+#detail { cursor: crosshair; }
+.tl-wrap + .tl-wrap { margin-top: 8px; }
+svg text { font-family: var(--font-mono); font-size: 11px; fill: var(--muted); }
+svg text.strong { fill: var(--fg); font-weight: 500; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 12.5px; color: var(--muted); margin-top: 10px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { display: inline-block; }
+.sw.ref { width: 2px; height: 14px; background: var(--ref); }
+.sw.cand { width: 3px; height: 12px; background: var(--cand); }
+.sw.candhi { width: 3px; height: 12px; background: var(--accent); }
+.sw.ok, .sw.bad { width: 9px; height: 9px; transform: rotate(45deg); }
+.sw.ok { background: var(--ok); } .sw.bad { background: var(--bad); }
+.sw.miss { width: 0; height: 14px; border-left: 2px dashed var(--ref); }
+
+.scores { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); margin-top: 14px; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.score { padding: 10px 12px; display: grid; gap: 2px; min-width: 0; }
+.score + .score { border-left: 1px solid var(--line); }
+.score .k { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.score .v { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 19px; font-weight: 500; }
+.score.f1 .v { color: var(--accent); }
+.caption { font-size: 12.5px; color: var(--muted); margin-top: 12px; max-width: 100ch; }
+
+section { padding-block: 40px 8px; }
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 24px; line-height: 1.25; margin: 0 0 12px; text-wrap: balance; }
+h3 { font-size: 15px; font-weight: 600; margin: 0 0 4px; }
+p { margin: 0 0 14px; }
+.lead { font-size: 17px; }
+.stages { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 10px; margin-top: 18px; }
+.stage { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 14px; min-width: 0; }
+.stage .k { font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+.stage p { font-size: 14px; color: var(--muted); margin: 4px 0 0; }
+.arrow { align-self: center; color: var(--muted); font-size: 20px; }
+.tasks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--line); margin-top: 8px; }
+.task { padding: 14px 16px 6px 0; min-width: 0; }
+.task + .task { padding-left: 16px; border-left: 1px solid var(--line); }
+.task .letter { font-family: var(--font-display); font-size: 30px; line-height: 1; color: var(--accent); }
+.task p { font-size: 14px; color: var(--muted); }
+.table-wrap { overflow-x: auto; margin-top: 10px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+td.num, th.num { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+tr.hl td { background: var(--accent-soft); }
+.note { font-size: 13.5px; color: var(--muted); }
+.pill { font-family: var(--font-mono); font-size: 11.5px; padding: 1px 7px; border-radius: 999px; border: 1px solid var(--line); white-space: nowrap; }
+.pill.shift { border-color: var(--accent); color: var(--accent); }
+pre.bib { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.55; overflow-x: auto; margin: 0; white-space: pre; }
+.bib-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; }
+.copy { font: 500 12.5px var(--font-body); padding: 5px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--fg); cursor: pointer; }
+footer { padding-block: 48px 40px; color: var(--muted); font-size: 13px; }
+@media (max-width: 720px) {
+  .stages { grid-template-columns: 1fr; }
+  .arrow { transform: rotate(90deg); justify-self: center; }
+  .tasks { grid-template-columns: 1fr; }
+  .task + .task { padding-left: 0; border-left: 0; border-top: 1px solid var(--line); }
+  .scores { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .score:nth-child(4) { border-left: 0; }
+  .score:nth-child(n+4) { border-top: 1px solid var(--line); }
+  .score .v { font-size: 16px; }
+}
+</style>
+</head>
+<body>
+
+<header class="col">
+  <div class="venue">Multiparty turn-taking · VoxConverse · Multi-TPC</div>
+  <h1><span class="name">DualTurn</span>: Leveraging Dual-Process Theory for Multimodal Multiparty Turn-Taking Prediction Using Acoustic and Linguistic Information</h1>
+  <div>
+    <div class="authors">Rutherford A. Patamia<sup>1</sup>, Ming Liu<sup>1</sup>, Wei Luo<sup>1</sup>, Favour Ekong<sup>2</sup>, Rehan Mohammed<sup>1</sup>, Gang Liu<sup>3</sup>, Akan Cosgun<sup>4</sup></div>
+    <div class="affil"><sup>1</sup>Deakin University · <sup>2</sup>Griffith University · <sup>3</sup>Harbin Engineering University · <sup>4</sup>Arm</div>
+  </div>
+  <div class="links">
+    <span class="btn primary" aria-disabled="true"><svg viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/></svg>Paper <span class="soon">coming soon</span></span>
+    <a class="btn" href="https://github.com/Ruddy202/DualTurn"><svg viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5"/></svg>Code</a>
+    <a class="btn" href="https://github.com/joonson/voxconverse"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/></svg>VoxConverse</a>
+    <a class="btn" href="https://doi.org/10.5281/zenodo.17935560"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/></svg>Multi-TPC</a>
+    <a class="btn" href="#cite"><svg viewBox="0 0 24 24"><path d="M6 6h12M6 12h12M6 18h8"/></svg>BibTeX</a>
+  </div>
+</header>
+
+<div class="demo" id="demo">
+  <div class="wide">
+    <div class="demo-head">
+      <div>
+        <h2>Listen to the system at work</h2>
+        <div class="note">Five VoxConverse TEST recordings with the final system's real output. Press play and the timeline follows the audio.</div>
+      </div>
+      <span class="tag">VoxConverse TEST</span>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="Example recordings" id="tabs"></div>
+    <p class="session-note" id="session-note"></p>
+
+    <div class="row">
+      <audio id="audio" controls preload="metadata"></audio>
+      <div class="ctrl">
+        <span class="lbl" id="tol-lbl">Tolerance</span>
+        <div class="seg" role="group" aria-labelledby="tol-lbl">
+          <button type="button" class="tol" data-tol="0.5" aria-pressed="true">±0.50 s</button>
+          <button type="button" class="tol" data-tol="0.7" aria-pressed="false">±0.70 s</button>
+          <button type="button" class="tol" data-tol="1.0" aria-pressed="false">±1.00 s</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-wrap"><svg id="overview" viewBox="0 0 1000 56" role="img" aria-label="Whole recording overview. Click to jump."></svg></div>
+    <div class="tl-wrap"><svg id="detail" viewBox="0 0 1000 300" role="img" aria-label="30-second detail view of speakers, candidates and predictions. Click to jump."></svg></div>
+
+    <div class="legend">
+      <span><i class="sw ref"></i>Reference floor transfer</span>
+      <span><i class="sw miss"></i>Missed transfer</span>
+      <span><i class="sw cand"></i>System 1 candidate</span>
+      <span><i class="sw candhi"></i>Candidate above the System 2 threshold</span>
+      <span><i class="sw ok"></i>Correct prediction</span>
+      <span><i class="sw bad"></i>False alarm</span>
+    </div>
+
+    <div class="scores" aria-live="polite">
+      <div class="score"><span class="k">Transfers</span><span class="v" id="s-gt">0</span></div>
+      <div class="score"><span class="k">Predicted</span><span class="v" id="s-pred">0</span></div>
+      <div class="score"><span class="k">TP</span><span class="v" id="s-tp">0</span></div>
+      <div class="score"><span class="k">FP / FN</span><span class="v" id="s-fpfn">0 / 0</span></div>
+      <div class="score"><span class="k">P / R</span><span class="v" id="s-pr">0 / 0</span></div>
+      <div class="score f1"><span class="k">Event F1</span><span class="v" id="s-f1">0</span></div>
+    </div>
+    <p class="caption">Reference transfers are derived from the official RTTM labels with the paper's event rules. Candidate bar height is the System 2 score (threshold 0.45). Final predictions come after timing correction and a 0.5 s cooldown, so they can sit slightly off the candidate that produced them. Audio and labels: VoxConverse (Chung et al., 2020), CC BY 4.0; copyright of the original videos remains with their owners.</p>
+  </div>
+</div>
+
+<main class="col">
+  <section id="overview-text">
+    <h2>Overview</h2>
+    <p class="lead">In multiparty conversation, most speech does not hand over the floor. Pauses, backchannels, brief interjections and overlap can look like transitions without being one. DualTurn splits the problem into two stages, inspired by dual-process theory.</p>
+    <div class="stages">
+      <div class="stage"><div class="k">System 1</div><h3>Discover</h3><p>A fast, recall-oriented process scans the audio continuously and proposes possible transition points.</p></div>
+      <div class="arrow" aria-hidden="true">→</div>
+      <div class="stage"><div class="k">System 2</div><h3>Verify</h3><p>A selective process checks each candidate with acoustic, linguistic, future-activity, speaker-change, ranking and agreement cues.</p></div>
+      <div class="arrow" aria-hidden="true">→</div>
+      <div class="stage"><div class="k">Output</div><h3>Localize</h3><p>Accepted candidates become floor-transfer events, matched one-to-one to the reference within a time tolerance.</p></div>
+    </div>
+  </section>
+
+  <section id="tasks">
+    <h2>Three evaluation tasks</h2>
+    <div class="tasks">
+      <div class="task"><div class="letter">A</div><h3>Supplied-point classification</h3><p>A decision time is given. Is the next event a SHIFT or a HOLD?</p></div>
+      <div class="task"><div class="letter">B</div><h3>Candidate verification</h3><p>Is an automatically proposed candidate a genuine floor transfer?</p></div>
+      <div class="task"><div class="letter">C</div><h3>Continuous discovery</h3><p>Find and localize floor transfers on the timeline, matched at ±0.50, ±0.70 or ±1.00 s.</p></div>
+    </div>
+  </section>
+
+  <section id="events">
+    <h2>Turn-taking events</h2>
+    <p>VoxConverse provides diarization only. Events are derived from adjacent speaker segments using a 0.06 s overlap threshold and a 0.50 s incoming-duration threshold.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Event</th><th>Pattern</th><th>Label</th></tr></thead>
+        <tbody>
+          <tr><td>Normal turn transfer (NTT)</td><td>New speaker, no substantial overlap, speaks &gt; 0.50 s</td><td><span class="pill shift">SHIFT</span></td></tr>
+          <tr><td>Interruption (ITT)</td><td>New speaker, overlap ≥ 0.06 s, speaks &gt; 0.50 s</td><td><span class="pill shift">SHIFT</span></td></tr>
+          <tr><td>Backchannel (BC)</td><td>New speaker, overlap ≥ 0.06 s, speaks ≤ 0.50 s</td><td><span class="pill">HOLD</span></td></tr>
+          <tr><td>Brief interjection (BI)</td><td>New speaker, no substantial overlap, speaks ≤ 0.50 s</td><td><span class="pill">HOLD</span></td></tr>
+          <tr><td>Continuation</td><td>Same speaker continues</td><td><span class="pill">HOLD</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="results">
+    <h2>Results</h2>
+    <h3>VoxConverse, official TEST partition (232 sessions)</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Analysis</th><th>Metric</th><th class="num">Result</th></tr></thead>
+        <tbody>
+          <tr><td>Task A: supplied-point classification</td><td>Macro-F1</td><td class="num">0.849</td></tr>
+          <tr><td>Task B: candidate verification</td><td>Event F1</td><td class="num">0.455</td></tr>
+          <tr class="hl"><td>Task C: continuous discovery, ±0.50 s</td><td>Event F1</td><td class="num">0.552</td></tr>
+          <tr><td>Task C: continuous discovery, ±0.70 s</td><td>Event F1</td><td class="num">0.597</td></tr>
+          <tr><td>Task C: continuous discovery, ±1.00 s</td><td>Event F1</td><td class="num">0.620</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">System 1 proposes 80,012 TEST candidates covering 6,092 of 6,348 reference transfers (0.960). At ±0.50 s, Task C reaches P = 0.536 and R = 0.569.</p>
+
+    <h3 style="margin-top:22px">Multi-TPC (seven triadic groups, 23 sessions)</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Protocol</th><th class="num">Task A</th><th class="num">Task B</th><th class="num">C, ±0.50 s</th><th class="num">C, ±1.00 s</th></tr></thead>
+        <tbody>
+          <tr><td>Group-disjoint held-out</td><td class="num">0.500</td><td class="num">0.563</td><td class="num">0.260</td><td class="num">0.445</td></tr>
+          <tr><td>Seven-group nested (mean ± SD)</td><td class="num">0.572 ± 0.045</td><td class="num">0.607 ± 0.021</td><td class="num">0.343 ± 0.040</td><td class="num">0.504 ± 0.050</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">The seven-group protocol evaluates a revised system and adds robustness evidence; it is not a second held-out test of the same model.</p>
+  </section>
+
+  <section id="reproduce">
+    <h2>Reproduce</h2>
+    <p>Eight notebooks reproduce the reported numbers: five for VoxConverse and three for Multi-TPC. Setup, data layout and run order are in the <a href="https://github.com/Ruddy202/DualTurn">repository</a>.</p>
+  </section>
+
+  <section id="cite">
+    <div class="bib-head"><h2 style="margin:0">Citation</h2><button type="button" class="copy" id="copy-bib">Copy</button></div>
+    <pre class="bib" id="bib">@misc{patamia2026dualturn,
+  title  = {Leveraging Dual-Process Theory for Multimodal Multiparty
+            Turn-Taking Prediction Using Acoustic and Linguistic Information},
+  author = {Patamia, Rutherford A. and Liu, Ming and Luo, Wei and
+            Ekong, Favour and Mohammed, Rehan and Liu, Gang and Cosgun, Akan},
+  year   = {2026},
+  note   = {Manuscript}
+}</pre>
+  </section>
+</main>
+
+<footer class="col">Code released under the MIT License. VoxConverse and Multi-TPC are distributed by their own authors.</footer>
+
+<script>
+const DATA = {"aepyx":{"speakers":4,"turns":[[2.5,6.16,0],[6.2,11.54,1],[11.68,14.62,0],[14.96,18.4,1],[19.09,25.44,1],[26.13,27.19,1],[28.32,32.56,0],[32.5,33.48,2],[34.4,51.6,2],[51.98,63.67,0],[66.98,74.84,0],[75.31,78.76,1],[79.16,83.24,0],[82.05,87.53,1],[88.84,89.96,1],[90.94,92.81,1],[93.35,94.17,1],[94.93,96.92,1],[97.54,99.81,1],[100.32,102.1,0],[102.42,104.12,1],[105.19,113.48,1],[114.1,120.48,0],[118.34,132.52,3],[133.08,149.56,0],[150.04,155.6,0],[155.91,157.05,3],[158.04,161.12,3],[162.76,164.29,3],[165.94,168.27,3]],"events":[[6.16,"NTT"],[11.54,"NTT"],[14.62,"NTT"],[18.4,"NA"],[25.44,"NA"],[32.5,"ITT"],[33.48,"NA"],[51.6,"NTT"],[74.84,"NTT"],[78.76,"NTT"],[89.96,"NA"],[92.81,"NA"],[94.17,"NA"],[96.92,"NA"],[99.81,"NTT"],[102.1,"NTT"],[113.48,"NTT"],[132.52,"NTT"],[149.56,"NA"],[155.6,"NTT"],[157.05,"NA"]],"cands":[[0.026,0.3400000035762787],[0.569,0.3400000035762787],[1.508,0.3400000035762787],[4.03,0.3400000035762787],[5.7,0.6470000147819519],[6.16,0.718999981880188],[6.7,0.36800000071525574],[8.56,0.3400000035762787],[11.002,0.39800000190734863],[11.694,0.8100000023841858],[12.2,0.43299999833106995],[14.4,0.7229999899864197],[14.874,0.7990000247955322],[16.46,0.34599998593330383],[17.685,0.24799999594688416],[21.0,0.2070000022649765],[21.7,0.19599999487400055],[25.3,0.26600000262260437],[26.111,0.3720000088214874],[26.911,0.414000004529953],[27.406,0.7099999785423279],[27.808,0.515999972820282],[30.2,0.3449999988079071],[30.932,0.3449999988079071],[31.399,0.3449999988079071],[32.545,0.7039999961853027],[32.9,0.38999998569488525],[33.6,0.27900001406669617],[37.0,0.20100000500679016],[41.583,0.17599999904632568],[45.428,0.19599999487400055],[47.56,0.23899999260902405],[51.101,0.38499999046325684],[51.944,0.4560000002384186],[55.453,0.22699999809265137],[58.552,0.1940000057220459],[59.2,0.1940000057220459],[59.596,0.21199999749660492],[61.086,0.21199999749660492],[61.6,0.28600001335144043],[62.1,0.28600001335144043],[63.1,0.3179999887943268],[63.665,0.32499998807907104],[64.8,0.3540000021457672],[65.315,0.375],[65.9,0.515999972820282],[66.799,0.7739999890327454],[67.336,0.3479999899864197],[69.382,0.3109999895095825],[72.04,0.25999999046325684],[75.053,0.8029999732971191],[75.7,0.39800000190734863],[78.1,0.4320000112056732],[78.91,0.8140000104904175],[81.286,0.35899999737739563],[82.048,0.3709999918937683],[83.388,0.796999990940094],[84.2,0.3319999873638153],[86.36,0.3319999873638153],[87.532,0.24899999797344208],[87.944,0.24899999797344208],[88.8,0.2150000035762787],[90.92,0.25],[91.998,0.2460000067949295],[92.4,0.25600001215934753],[94.835,0.29899999499320984],[95.731,0.31200000643730164],[96.1,0.31200000643730164],[97.456,0.289000004529953],[99.5,0.7390000224113464],[100.003,0.7440000176429749],[100.437,0.34299999475479126],[101.2,0.3409999907016754],[102.172,0.7649999856948853],[103.922,0.36899998784065247],[105.098,0.3310000002384186],[108.4,0.20900000631809235],[111.245,0.35199999809265137],[111.6,0.3370000123977661],[113.881,0.7630000114440918],[115.0,0.3059999942779541],[116.585,0.28999999165534973],[118.703,0.28999999165534973],[119.1,0.335999995470047],[119.732,0.3370000123977661],[120.1,0.5429999828338623],[120.858,0.7540000081062317],[124.12,0.25999999046325684],[126.92,0.24199999868869781],[129.76,0.2540000081062317],[132.1,0.5860000252723694],[132.732,0.6980000138282776],[133.139,0.2840000092983246],[136.557,0.22499999403953552],[139.56,0.20999999344348907],[143.131,0.22499999403953552],[146.0,0.1770000010728836],[149.899,0.24799999594688416],[150.5,0.24799999594688416],[153.368,0.26600000262260437],[154.011,0.26600000262260437],[154.397,0.2939999997615814],[154.946,0.2939999997615814],[155.5,0.7179999947547913],[155.919,0.3330000042915344],[156.8,0.25699999928474426],[157.449,0.3009999990463257],[158.0,0.24199999868869781],[161.329,0.2630000114440918],[162.242,0.2630000114440918],[162.714,0.2630000114440918],[164.689,0.2630000114440918],[165.409,0.2630000114440918],[165.938,0.2630000114440918],[168.197,0.2630000114440918]],"preds":[[5.975,0.719],[11.584,0.81],[14.504,0.799],[27.577,0.71],[32.763,0.704],[51.756,0.456],[65.703,0.516],[67.175,0.774],[75.433,0.803],[79.126,0.814],[83.441,0.797],[99.646,0.744],[102.316,0.765],[114.073,0.763],[119.997,0.543],[120.715,0.754],[132.328,0.698],[155.528,0.718]],"gt":[6.16,11.54,14.62,32.5,51.6,74.84,78.76,99.81,102.1,113.48,132.52,155.6],"matches":{"0.5":{"pairs":[[5.975,6.16],[11.584,11.54],[14.504,14.62],[32.763,32.5],[51.756,51.6],[79.126,78.76],[99.646,99.81],[102.316,102.1],[132.328,132.52],[155.528,155.6]],"TP":10,"FP":8,"FN":2},"0.7":{"pairs":[[5.975,6.16],[11.584,11.54],[14.504,14.62],[32.763,32.5],[51.756,51.6],[75.433,74.84],[79.126,78.76],[99.646,99.81],[102.316,102.1],[114.073,113.48],[132.328,132.52],[155.528,155.6]],"TP":12,"FP":6,"FN":0},"1.0":{"pairs":[[5.975,6.16],[11.584,11.54],[14.504,14.62],[32.763,32.5],[51.756,51.6],[75.433,74.84],[79.126,78.76],[99.646,99.81],[102.316,102.1],[114.073,113.48],[132.328,132.52],[155.528,155.6]],"TP":12,"FP":6,"FN":0}}},"aggyz":{"speakers":13,"turns":[[0.79,18.88,0],[19.77,21.76,1],[21.54,41.02,2],[40.98,61.23,3],[61.4,77.0,4],[77.3,80.52,2],[80.86,82.49,5],[83.13,92.59,5],[92.69,93.59,3],[94.11,109.96,5],[110.31,117.5,2],[117.8,125.06,3],[125.4,133.96,2],[134.11,144.81,6],[145.04,146.36,3],[146.46,149.69,6],[147.34,149.36,3],[150.75,153.59,6],[154.56,159.31,2],[159.86,163.38,6],[163.72,169.63,2],[169.92,174.88,7],[175.36,190.56,2],[191.11,194.25,8],[195.13,200.65,2],[200.86,206.21,9],[207.08,208.08,2],[208.02,219.23,10],[219.4,220.34,2],[220.59,227.94,11],[228.24,233.17,2],[233.54,251.02,12],[251.46,260.17,2]],"events":[[18.88,"NTT"],[21.54,"ITT"],[41.02,"NTT"],[61.23,"NTT"],[77.0,"NTT"],[80.52,"NTT"],[82.49,"NA"],[92.59,"NTT"],[93.59,"NTT"],[109.96,"NTT"],[117.5,"NTT"],[125.06,"NTT"],[133.96,"NTT"],[144.81,"NTT"],[146.36,"NTT"],[153.59,"NTT"],[159.31,"NTT"],[163.38,"NTT"],[169.63,"NTT"],[174.88,"NTT"],[190.56,"NTT"],[194.25,"NTT"],[200.65,"NTT"],[206.21,"NTT"],[208.02,"ITT"],[219.23,"NTT"],[220.34,"NTT"],[227.94,"NTT"],[233.17,"NTT"],[251.02,"NTT"]],"cands":[[0.303,0.32499998807907104],[1.1,0.32499998807907104],[6.21,0.32499998807907104],[11.93,0.32499998807907104],[16.53,0.32499998807907104],[18.465,0.37599998712539673],[18.963,0.628000020980835],[19.349,0.7089999914169312],[20.97,0.5450000166893005],[21.75,0.7649999856948853],[26.65,0.24199999868869781],[27.95,0.24199999868869781],[33.37,0.20399999618530273],[37.81,0.3100000023841858],[40.1,0.35600000619888306],[40.493,0.5070000290870667],[40.951,0.7799999713897705],[41.621,0.41100001335144043],[49.292,0.3529999852180481],[54.39,0.3199999928474426],[59.312,0.34599998593330383],[61.168,0.7820000052452087],[61.8,0.6230000257492065],[62.15,0.34299999475479126],[67.31,0.31299999356269836],[74.67,0.38499999046325684],[77.291,0.8149999976158142],[80.543,0.8009999990463257],[81.31,0.2980000078678131],[82.403,0.2980000078678131],[82.8,0.2980000078678131],[86.67,0.2980000078678131],[92.308,0.22699999809265137],[92.884,0.2460000067949295],[93.31,0.2460000067949295],[94.0,0.24300000071525574],[99.271,0.22100000083446503],[106.65,0.3790000081062317],[110.216,0.5630000233650208],[110.6,0.6589999794960022],[115.15,0.39899998903274536],[117.736,0.8159999847412109],[118.1,0.41999998688697815],[124.19,0.39500001072883606],[124.6,0.42500001192092896],[125.243,0.8190000057220459],[125.647,0.5770000219345093],[129.75,0.328000009059906],[133.598,0.5220000147819519],[134.022,0.8180000185966492],[134.54,0.4490000009536743],[137.95,0.27300000190734863],[143.03,0.37400001287460327],[144.055,0.37400001287460327],[144.678,0.7979999780654907],[145.084,0.5830000042915344],[145.5,0.3240000009536743],[146.237,0.5580000281333923],[146.7,0.3009999990463257],[147.414,0.29100000858306885],[148.454,0.21199999749660492],[149.144,0.33399999141693115],[149.945,0.25099998712539673],[150.656,0.25099998712539673],[151.948,0.24400000274181366],[152.4,0.24400000274181366],[153.35,0.38499999046325684],[153.898,0.7289999723434448],[154.728,0.367000013589859],[158.007,0.35600000619888306],[159.0,0.781000018119812],[159.705,0.8289999961853027],[160.2,0.43299999833106995],[163.001,0.722000002861023],[163.787,0.828000009059906],[168.67,0.367000013589859],[170.0,0.7749999761581421],[170.4,0.5249999761581421],[174.1,0.3799999952316284],[174.654,0.7979999780654907],[175.363,0.8059999942779541],[180.01,0.38499999046325684],[186.21,0.3930000066757202],[189.9,0.3930000066757202],[190.793,0.7950000166893005],[191.484,0.3440000116825104],[193.8,0.35199999809265137],[194.632,0.7549999952316284],[196.0,0.33000001311302185],[200.708,0.6359999775886536],[201.173,0.6610000133514404],[206.695,0.42399999499320984],[207.31,0.4580000042915344],[207.7,0.7409999966621399],[208.247,0.7630000114440918],[208.6,0.375],[215.385,0.35899999737739563],[219.344,0.6449999809265137],[220.316,0.7739999890327454],[221.055,0.4059999883174896],[224.71,0.33899998664855957],[228.184,0.8040000200271606],[228.6,0.4059999883174896],[233.201,0.828000009059906],[233.786,0.7329999804496765],[238.91,0.3190000057220459],[241.16,0.3190000057220459],[244.25,0.32899999618530273],[249.87,0.32899999618530273],[251.351,0.6370000243186951],[251.93,0.3720000088214874],[252.97,0.32899999618530273],[256.63,0.32899999618530273],[257.97,0.32899999618530273],[260.128,0.32899999618530273]],"preds":[[18.91,0.709],[21.039,0.545],[21.851,0.765],[40.666,0.78],[61.552,0.782],[77.16,0.815],[80.938,0.801],[110.14,0.659],[117.587,0.816],[124.97,0.819],[133.992,0.818],[144.811,0.798],[145.98,0.558],[153.958,0.729],[159.407,0.829],[163.665,0.828],[170.021,0.775],[174.922,0.806],[191.131,0.795],[194.677,0.755],[200.794,0.661],[208.093,0.763],[219.613,0.645],[220.717,0.774],[228.503,0.804],[233.539,0.828],[251.609,0.637]],"gt":[18.88,21.54,41.02,61.23,77.0,80.52,92.59,93.59,109.96,117.5,125.06,133.96,144.81,146.36,153.59,159.31,163.38,169.63,174.88,190.56,194.25,200.65,206.21,208.02,219.23,220.34,227.94,233.17,251.02],"matches":{"0.5":{"pairs":[[18.91,18.88],[21.851,21.54],[40.666,41.02],[61.552,61.23],[77.16,77.0],[80.938,80.52],[110.14,109.96],[117.587,117.5],[124.97,125.06],[133.992,133.96],[144.811,144.81],[145.98,146.36],[153.958,153.59],[159.407,159.31],[163.665,163.38],[170.021,169.63],[174.922,174.88],[194.677,194.25],[200.794,200.65],[208.093,208.02],[219.613,219.23],[220.717,220.34],[233.539,233.17]],"TP":23,"FP":4,"FN":6},"0.7":{"pairs":[[18.91,18.88],[21.851,21.54],[40.666,41.02],[61.552,61.23],[77.16,77.0],[80.938,80.52],[110.14,109.96],[117.587,117.5],[124.97,125.06],[133.992,133.96],[144.811,144.81],[145.98,146.36],[153.958,153.59],[159.407,159.31],[163.665,163.38],[170.021,169.63],[174.922,174.88],[191.131,190.56],[194.677,194.25],[200.794,200.65],[208.093,208.02],[219.613,219.23],[220.717,220.34],[228.503,227.94],[233.539,233.17],[251.609,251.02]],"TP":26,"FP":1,"FN":3},"1.0":{"pairs":[[18.91,18.88],[21.851,21.54],[40.666,41.02],[61.552,61.23],[77.16,77.0],[80.938,80.52],[110.14,109.96],[117.587,117.5],[124.97,125.06],[133.992,133.96],[144.811,144.81],[145.98,146.36],[153.958,153.59],[159.407,159.31],[163.665,163.38],[170.021,169.63],[174.922,174.88],[191.131,190.56],[194.677,194.25],[200.794,200.65],[208.093,208.02],[219.613,219.23],[220.717,220.34],[228.503,227.94],[233.539,233.17],[251.609,251.02]],"TP":26,"FP":1,"FN":3}}},"aiqwk":{"speakers":7,"turns":[[0.03,5.05,0],[5.59,11.26,0],[11.63,23.74,0],[24.09,29.09,0],[29.4,49.13,1],[50.98,55.5,1],[56.0,61.36,1],[61.77,65.16,1],[65.86,71.9,1],[72.35,73.88,2],[74.52,79.32,1],[79.59,83.0,3],[80.73,81.43,4],[83.88,87.36,4],[86.58,88.61,3],[87.86,90.75,4],[92.08,96.68,1],[97.42,102.25,1],[102.78,107.84,1],[108.3,110.77,1],[111.14,114.03,1],[114.42,118.22,1],[118.81,124.46,1],[124.84,126.61,5],[127.52,129.69,5],[130.19,135.14,1],[135.37,137.94,1],[138.55,140.65,1],[141.02,144.67,1],[145.07,147.13,1],[149.56,156.63,1],[159.42,167.96,1],[168.29,170.11,1],[170.28,174.17,6],[174.63,177.0,1],[177.84,191.98,1],[192.61,193.9,0],[194.48,198.85,0]],"events":[[5.05,"NA"],[11.26,"NA"],[23.74,"NA"],[29.09,"NTT"],[55.5,"NA"],[61.36,"NA"],[65.16,"NA"],[71.9,"NTT"],[73.88,"NTT"],[79.32,"NTT"],[86.58,"ITT"],[87.86,"ITT"],[96.68,"NA"],[102.25,"NA"],[107.84,"NA"],[110.77,"NA"],[114.03,"NA"],[118.22,"NA"],[124.46,"NTT"],[126.61,"NA"],[129.69,"NTT"],[135.14,"NA"],[137.94,"NA"],[140.65,"NA"],[144.67,"NA"],[167.96,"NA"],[170.11,"NTT"],[174.17,"NTT"],[177.0,"NA"],[191.98,"NTT"],[193.9,"NA"]],"cands":[[0.059,0.23199999332427979],[1.755,0.23199999332427979],[2.3,0.23199999332427979],[2.7,0.23199999332427979],[5.16,0.23199999332427979],[11.16,0.23199999332427979],[17.72,0.18199999630451202],[22.1,0.25999999046325684],[22.598,0.25999999046325684],[22.996,0.3319999873638153],[23.666,0.3319999873638153],[25.08,0.3319999873638153],[28.751,0.6909999847412109],[29.197,0.7680000066757202],[29.78,0.46000000834465027],[32.5,0.3440000116825104],[36.82,0.1850000023841858],[40.44,0.23600000143051147],[46.16,0.289000004529953],[48.78,0.35499998927116394],[49.396,0.2919999957084656],[50.25,0.2919999957084656],[50.753,0.2919999957084656],[51.444,0.2919999957084656],[52.9,0.22100000083446503],[53.534,0.22100000083446503],[55.27,0.22100000083446503],[55.709,0.1860000044107437],[61.0,0.18299999833106995],[61.56,0.18000000715255737],[64.69,0.18199999630451202],[65.07,0.18199999630451202],[65.557,0.18199999630451202],[66.0,0.18299999833106995],[71.197,0.19499999284744263],[71.787,0.1889999955892563],[72.303,0.2329999953508377],[79.047,0.6850000023841858],[79.403,0.7329999804496765],[79.799,0.4300000071525574],[80.758,0.31700000166893005],[81.912,0.31700000166893005],[82.512,0.31700000166893005],[83.402,0.3400000035762787],[83.801,0.3160000145435333],[84.444,0.4050000011920929],[84.8,0.5109999775886536],[85.506,0.3569999933242798],[86.093,0.33000001311302185],[87.4,0.25999999046325684],[87.9,0.27300000190734863],[89.955,0.34200000762939453],[91.7,0.3779999911785126],[92.3,0.34200000762939453],[96.413,0.24400000274181366],[97.033,0.24400000274181366],[102.237,0.22699999809265137],[102.948,0.1979999989271164],[107.533,0.17900000512599945],[107.923,0.17900000512599945],[113.66,0.21299999952316284],[114.12,0.21299999952316284],[118.043,0.24300000071525574],[118.516,0.24300000071525574],[124.266,0.5609999895095825],[124.733,0.6010000109672546],[126.6,0.2290000021457672],[127.08,0.2290000021457672],[129.48,0.31299999356269836],[130.349,0.2639999985694885],[134.95,0.20000000298023224],[137.394,0.19300000369548798],[138.201,0.19499999284744263],[144.48,0.2290000021457672],[145.08,0.2290000021457672],[146.945,0.2460000067949295],[147.568,0.21699999272823334],[148.524,0.21699999272823334],[149.1,0.2329999953508377],[149.504,0.2329999953508377],[156.47,0.32600000500679016],[159.2,0.25999999046325684],[162.073,0.25999999046325684],[162.552,0.25999999046325684],[167.832,0.26499998569488525],[168.501,0.3499999940395355],[169.105,0.3499999940395355],[169.5,0.38999998569488525],[170.274,0.7559999823570251],[171.397,0.33399999141693115],[172.025,0.33399999141693115],[173.6,0.3569999933242798],[174.494,0.7820000052452087],[175.2,0.3569999933242798],[176.745,0.7390000224113464],[177.1,0.3630000054836273],[177.48,0.335999995470047],[178.4,0.33500000834465027],[182.4,0.2879999876022339],[185.52,0.20999999344348907],[191.951,0.4090000092983246],[192.436,0.7039999961853027],[193.1,0.3370000123977661],[195.901,0.32899999618530273],[196.269,0.47200000286102295],[196.9,0.328000009059906],[198.0,0.3269999921321869],[199.073,0.3269999921321869]],"preds":[[28.803,0.768],[29.327,0.46],[79.222,0.733],[84.589,0.511],[124.324,0.601],[170.12,0.756],[174.62,0.782],[177.196,0.739],[192.192,0.704],[196.022,0.472]],"gt":[29.09,71.9,73.88,79.32,86.58,87.86,124.46,129.69,170.11,174.17,191.98],"matches":{"0.5":{"pairs":[[29.327,29.09],[79.222,79.32],[124.324,124.46],[170.12,170.11],[174.62,174.17],[192.192,191.98]],"TP":6,"FP":4,"FN":5},"0.7":{"pairs":[[29.327,29.09],[79.222,79.32],[124.324,124.46],[170.12,170.11],[174.62,174.17],[192.192,191.98]],"TP":6,"FP":4,"FN":5},"1.0":{"pairs":[[29.327,29.09],[79.222,79.32],[124.324,124.46],[170.12,170.11],[174.62,174.17],[192.192,191.98]],"TP":6,"FP":4,"FN":5}}},"cadba":{"speakers":7,"turns":[[0.91,7.06,0],[7.27,11.2,0],[11.5,12.28,0],[12.3,19.05,1],[18.98,40.15,2],[40.96,51.71,2],[52.02,55.16,3],[58.88,63.34,3],[63.52,70.8,4],[70.96,74.72,2],[74.75,87.25,4],[87.23,90.69,2],[90.81,99.5,5],[99.28,102.89,4],[102.65,107.74,5],[103.75,104.23,4],[105.79,114.12,4],[108.35,110.21,5],[111.46,113.49,5],[115.07,117.89,5],[118.69,124.75,2],[124.96,148.66,6],[148.96,158.5,2],[159.0,160.67,2],[161.23,163.67,2],[165.4,166.9,1],[167.23,182.06,2],[182.24,184.3,1]],"events":[[7.06,"NA"],[11.2,"NA"],[12.28,"NTT"],[18.98,"ITT"],[40.15,"NA"],[51.71,"NTT"],[63.34,"NTT"],[70.8,"NTT"],[74.72,"NTT"],[87.25,"NTT"],[90.69,"NTT"],[99.28,"ITT"],[102.65,"ITT"],[117.89,"NTT"],[124.75,"NTT"],[148.66,"NTT"],[158.5,"NA"],[160.67,"NA"],[166.9,"NTT"],[182.06,"NTT"]],"cands":[[0.376,0.37700000405311584],[1.0,0.37700000405311584],[1.9,0.367000013589859],[6.937,0.367000013589859],[11.1,0.367000013589859],[12.277,0.7860000133514404],[12.7,0.4740000069141388],[16.66,0.367000013589859],[19.332,0.7900000214576721],[19.745,0.7110000252723694],[22.54,0.3050000071525574],[27.4,0.1860000044107437],[31.58,0.20200000703334808],[36.42,0.31700000166893005],[39.9,0.34700000286102295],[40.55,0.40400001406669617],[41.012,0.34700000286102295],[45.44,0.35499998927116394],[51.289,0.34200000762939453],[51.65,0.5009999871253967],[53.026,0.3370000123977661],[53.6,0.3370000123977661],[54.708,0.3400000035762787],[55.2,0.40700000524520874],[55.6,0.3370000123977661],[57.3,0.24300000071525574],[58.805,0.24300000071525574],[62.0,0.27000001072883606],[63.084,0.7379999756813049],[63.524,0.8059999942779541],[66.22,0.2849999964237213],[68.1,0.29100000858306885],[68.6,0.29100000858306885],[69.1,0.29100000858306885],[70.558,0.35100001096725464],[71.1,0.31200000643730164],[71.969,0.3109999895095825],[73.6,0.3109999895095825],[74.699,0.7559999823570251],[75.186,0.4269999861717224],[79.34,0.3059999942779541],[84.82,0.29600000381469727],[85.304,0.35199999809265137],[86.4,0.35199999809265137],[87.104,0.37599998712539673],[87.548,0.4230000078678131],[88.175,0.375],[90.2,0.2619999945163727],[91.028,0.2709999978542328],[92.86,0.1860000044107437],[94.5,0.19099999964237213],[94.999,0.23999999463558197],[95.4,0.23999999463558197],[98.8,0.4449999928474426],[99.279,0.7490000128746033],[99.728,0.753000020980835],[100.421,0.35600000619888306],[101.8,0.35199999809265137],[102.2,0.41499999165534973],[102.75,0.7200000286102295],[103.4,0.37700000405311584],[105.011,0.20000000298023224],[107.014,0.1940000057220459],[107.498,0.20999999344348907],[108.029,0.20499999821186066],[108.551,0.20499999821186066],[109.2,0.23600000143051147],[109.962,0.23600000143051147],[110.685,0.2750000059604645],[111.1,0.2750000059604645],[111.6,0.2750000059604645],[112.74,0.2280000001192093],[113.246,0.21400000154972076],[114.119,0.22699999809265137],[115.1,0.22599999606609344],[116.3,0.22599999606609344],[116.7,0.22599999606609344],[117.478,0.3089999854564667],[117.847,0.6150000095367432],[118.533,0.43799999356269836],[124.803,0.7429999709129333],[125.519,0.3799999952316284],[132.56,0.23100000619888306],[138.06,0.32899999618530273],[144.161,0.42899999022483826],[144.698,0.41200000047683716],[145.194,0.3919999897480011],[146.28,0.40299999713897705],[148.669,0.8019999861717224],[149.3,0.37700000405311584],[153.02,0.23800000548362732],[158.1,0.2409999966621399],[158.9,0.2460000067949295],[163.497,0.24699999392032623],[163.907,0.27900001406669617],[164.528,0.27900001406669617],[164.9,0.27900001406669617],[165.3,0.27900001406669617],[166.3,0.3009999990463257],[167.035,0.7049999833106995],[167.5,0.3569999933242798],[168.174,0.3050000071525574],[172.66,0.29600000381469727],[174.34,0.2939999997615814],[177.78,0.2939999997615814],[181.601,0.3409999907016754],[182.154,0.41600000858306885],[183.401,0.35100001096725464],[183.828,0.32199999690055847]],"preds":[[12.16,0.786],[19.727,0.79],[51.267,0.501],[63.251,0.806],[74.697,0.756],[99.479,0.753],[102.574,0.72],[118.044,0.615],[125.168,0.743],[148.876,0.802],[166.984,0.705]],"gt":[12.28,18.98,51.71,63.34,70.8,74.72,87.25,90.69,99.28,102.65,117.89,124.75,148.66,166.9,182.06],"matches":{"0.5":{"pairs":[[12.16,12.28],[51.267,51.71],[63.251,63.34],[74.697,74.72],[99.479,99.28],[102.574,102.65],[118.044,117.89],[125.168,124.75],[148.876,148.66],[166.984,166.9]],"TP":10,"FP":1,"FN":5},"0.7":{"pairs":[[12.16,12.28],[51.267,51.71],[63.251,63.34],[74.697,74.72],[99.479,99.28],[102.574,102.65],[118.044,117.89],[125.168,124.75],[148.876,148.66],[166.984,166.9]],"TP":10,"FP":1,"FN":5},"1.0":{"pairs":[[12.16,12.28],[19.727,18.98],[51.267,51.71],[63.251,63.34],[74.697,74.72],[99.479,99.28],[102.574,102.65],[118.044,117.89],[125.168,124.75],[148.876,148.66],[166.984,166.9]],"TP":11,"FP":0,"FN":4}}},"cqfmj":{"speakers":4,"turns":[[0.73,20.76,0],[23.36,36.69,1],[37.63,43.36,1],[44.32,52.8,1],[53.68,58.84,1],[59.8,64.73,1],[64.88,65.53,2],[65.6,72.77,1],[72.91,73.65,3],[73.72,78.48,1],[78.37,79.97,3],[79.38,90.54,1],[91.32,95.15,1],[95.88,98.56,1],[99.37,111.76,1],[103.25,106.53,2],[107.03,108.16,2],[112.36,113.95,1]],"events":[[36.69,"NA"],[43.36,"NA"],[52.8,"NA"],[58.84,"NA"],[64.73,"NTT"],[65.53,"NTT"],[72.77,"NTT"],[73.65,"NTT"],[78.37,"ITT"],[79.38,"ITT"],[90.54,"NA"],[95.15,"NA"],[98.56,"NA"],[106.53,"NA"]],"cands":[[0.277,0.210999995470047],[1.2,0.210999995470047],[5.41,0.210999995470047],[11.61,0.210999995470047],[17.41,0.210999995470047],[21.001,0.2370000034570694],[21.646,0.2370000034570694],[22.076,0.2370000034570694],[22.768,0.2370000034570694],[23.327,0.2370000034570694],[28.65,0.23399999737739563],[33.09,0.22300000488758087],[36.601,0.25999999046325684],[37.1,0.26899999380111694],[37.73,0.25999999046325684],[42.546,0.21899999678134918],[46.47,0.2240000069141388],[52.565,0.24400000274181366],[55.65,0.2639999985694885],[59.06,0.2840000092983246],[59.843,0.2840000092983246],[64.202,0.24799999594688416],[64.7,0.25],[65.192,0.24799999594688416],[65.93,0.2919999957084656],[67.81,0.2460000067949295],[72.2,0.22300000488758087],[72.7,0.22300000488758087],[73.5,0.22300000488758087],[73.892,0.22300000488758087],[77.833,0.21199999749660492],[78.3,0.22200000286102295],[78.996,0.2150000035762787],[81.01,0.22599999606609344],[85.89,0.22300000488758087],[91.19,0.1860000044107437],[95.93,0.1850000023841858],[99.307,0.1979999989271164],[104.49,0.1979999989271164],[105.49,0.1979999989271164],[107.587,0.1979999989271164],[108.223,0.1979999989271164],[108.8,0.1979999989271164],[110.81,0.1979999989271164],[113.4,0.1979999989271164],[114.088,0.2759999930858612]],"preds":[],"gt":[64.73,65.53,72.77,73.65,78.37,79.38],"matches":{"0.5":{"pairs":[],"TP":0,"FP":0,"FN":6},"0.7":{"pairs":[],"TP":0,"FP":0,"FN":6},"1.0":{"pairs":[],"TP":0,"FP":0,"FN":6}}}};
+(function () {
+  const ORDER = [
+    { id: "aggyz", sub: "13 speakers" },
+    { id: "cadba", sub: "High precision" },
+    { id: "aepyx", sub: "Some false alarms" },
+    { id: "aiqwk", sub: "Mixed" },
+    { id: "cqfmj", sub: "Failure case" }
+  ];
+  const NOTES = {
+    aggyz: "A crowded recording with 13 speakers. Most floor transfers are found, with few false alarms.",
+    cadba: "Seven speakers. Nearly every prediction is correct, but some transfers are missed.",
+    aepyx: "Four speakers. Most transfers are found, but System 2 also accepts several candidates that are not transfers.",
+    aiqwk: "Seven speakers and many same-speaker pauses. About half the transfers are found.",
+    cqfmj: "A failure case. System 1 proposes candidates near every transfer, but none scores above the System 2 threshold, so nothing is predicted."
+  };
+  const THR = 0.45, WIN = 30, X0 = 64, X1 = 970;
+  const NS = "http://www.w3.org/2000/svg";
+  const audio = document.getElementById("audio");
+  const ov = document.getElementById("overview"), dt = document.getElementById("detail");
+  const state = { sid: ORDER[0].id, tol: "0.5", winStart: 0 };
+
+  const css = () => getComputedStyle(document.documentElement);
+  const col = (cs, v) => cs.getPropertyValue(v).trim();
+  function el(parent, tag, attrs, text) {
+    const n = document.createElementNS(NS, tag);
+    for (const k in attrs) n.setAttribute(k, attrs[k]);
+    if (text !== undefined) n.textContent = text;
+    parent.appendChild(n); return n;
+  }
+  const dur = () => (audio.duration && isFinite(audio.duration)) ? audio.duration : Math.max(...DATA[state.sid].turns.map(t => t[1]));
+
+  function matchInfo() {
+    const d = DATA[state.sid], m = d.matches[state.tol];
+    const matchedPred = new Set(m.pairs.map(p => p[0])), matchedGt = new Set(m.pairs.map(p => p[1]));
+    return { d, m, matchedPred, matchedGt };
+  }
+
+  function drawOverview() {
+    const cs = css(), { d, matchedPred, matchedGt } = matchInfo(), D = dur();
+    ov.textContent = "";
+    const x = t => X0 + (t / D) * (X1 - X0);
+    el(ov, "text", { x: 8, y: 22, class: "strong" }, "Full");
+    d.turns.forEach(t => el(ov, "rect", { x: x(t[0]), y: 10, width: Math.max(1, x(t[1]) - x(t[0])), height: 16, fill: col(cs, "--s" + (t[2] % 8)) }));
+    d.gt.forEach(g => el(ov, "line", { x1: x(g), x2: x(g), y1: 30, y2: 42, stroke: col(cs, "--ref"), "stroke-width": 1.5, "stroke-dasharray": matchedGt.has(g) ? "none" : "2 2" }));
+    d.preds.forEach(p => el(ov, "rect", { x: x(p[0]) - 1.5, y: 44, width: 3, height: 8, fill: matchedPred.has(p[0]) ? col(cs, "--ok") : col(cs, "--bad") }));
+    const ws = state.winStart, we = Math.min(D, ws + WIN);
+    el(ov, "rect", { x: x(ws), y: 4, width: Math.max(4, x(we) - x(ws)), height: 50, fill: col(cs, "--accent"), "fill-opacity": 0.10, stroke: col(cs, "--accent"), "stroke-width": 1.2, rx: 3 });
+    el(ov, "line", { x1: x(audio.currentTime), x2: x(audio.currentTime), y1: 4, y2: 54, stroke: col(cs, "--accent"), "stroke-width": 2 });
+  }
+
+  function drawDetail() {
+    const cs = css(), { d, matchedPred, matchedGt } = matchInfo(), D = dur();
+    dt.textContent = "";
+    const ws = state.winStart, we = ws + WIN, tol = parseFloat(state.tol);
+    const x = t => X0 + ((t - ws) / WIN) * (X1 - X0);
+    const vis = t => t >= ws - 1 && t <= we + 1;
+    const n = d.speakers, laneTop = 14, laneArea = 128, laneH = laneArea / n;
+    const clip = el(el(dt, "defs", {}), "clipPath", { id: "clip" });
+    el(clip, "rect", { x: X0, y: 0, width: X1 - X0, height: 300 });
+    // speaker lanes
+    for (let i = 0; i < n; i++) {
+      const y = laneTop + i * laneH;
+      el(dt, "line", { x1: X0, x2: X1, y1: y + laneH / 2, y2: y + laneH / 2, stroke: col(cs, "--line"), "stroke-width": 1 });
+      if (laneH >= 9 || i % 2 === 0) el(dt, "text", { x: 8, y: y + laneH / 2 + 4, class: "strong", style: laneH < 11 ? "font-size:9px" : "" }, "S" + (i + 1));
+    }
+    const g = el(dt, "g", { "clip-path": "url(#clip)" });
+    d.turns.forEach(t => { if (t[1] >= ws && t[0] <= we) el(g, "rect", { x: x(t[0]), y: laneTop + t[2] * laneH + 1, width: Math.max(1.5, x(t[1]) - x(t[0])), height: Math.max(3, laneH - 2), rx: 2, fill: col(cs, "--s" + (t[2] % 8)) }); });
+    // reference transfers with tolerance windows
+    const refTop = laneTop, refBot = 262;
+    d.gt.forEach(gt => {
+      if (!vis(gt)) return;
+      el(g, "rect", { x: x(gt - tol), y: refTop, width: x(gt + tol) - x(gt - tol), height: refBot - refTop, fill: col(cs, "--accent"), "fill-opacity": 0.07 });
+      el(g, "line", { x1: x(gt), x2: x(gt), y1: refTop, y2: refBot, stroke: col(cs, "--ref"), "stroke-width": 1.8, "stroke-dasharray": matchedGt.has(gt) ? "none" : "4 3" });
+    });
+    // event type labels
+    d.events.forEach(e => { if ((e[1] === "NTT" || e[1] === "ITT") && vis(e[0])) el(g, "text", { x: x(e[0]) + 3, y: 156, class: "strong", style: "font-size:10px" }, e[1]); });
+    // System 1 candidates as score bars
+    const cBase = 214, cH = 44;
+    el(dt, "text", { x: 8, y: cBase - 2, class: "strong" }, "Sys 1");
+    el(dt, "line", { x1: X0, x2: X1, y1: cBase, y2: cBase, stroke: col(cs, "--line"), "stroke-width": 1 });
+    const ty = cBase - THR * cH;
+    el(dt, "line", { x1: X0, x2: X1, y1: ty, y2: ty, stroke: col(cs, "--accent"), "stroke-width": 1, "stroke-dasharray": "2 3" });
+    el(dt, "text", { x: X1 + 4, y: ty + 4 }, "0.45");
+    d.cands.forEach(c => { if (vis(c[0])) el(g, "rect", { x: x(c[0]) - 1.5, y: cBase - c[1] * cH, width: 3, height: Math.max(1, c[1] * cH), fill: c[1] >= THR ? col(cs, "--accent") : col(cs, "--cand") }); });
+    // System 2 predictions
+    const pY = 240;
+    el(dt, "text", { x: 8, y: pY + 4, class: "strong" }, "Sys 2");
+    el(dt, "line", { x1: X0, x2: X1, y1: pY, y2: pY, stroke: col(cs, "--line"), "stroke-width": 1 });
+    d.preds.forEach(p => { if (vis(p[0])) { const cx = x(p[0]); el(g, "rect", { x: cx - 6, y: pY - 6, width: 12, height: 12, transform: `rotate(45 ${cx} ${pY})`, fill: matchedPred.has(p[0]) ? col(cs, "--ok") : col(cs, "--bad") }); } });
+    // axis
+    const aY = 272;
+    el(dt, "line", { x1: X0, x2: X1, y1: aY, y2: aY, stroke: col(cs, "--line"), "stroke-width": 1 });
+    for (let t = Math.ceil(ws / 5) * 5; t <= we; t += 5) {
+      el(dt, "line", { x1: x(t), x2: x(t), y1: aY, y2: aY + 5, stroke: col(cs, "--muted"), "stroke-width": 1 });
+      const mm = Math.floor(t / 60), ss = String(Math.round(t % 60)).padStart(2, "0");
+      el(dt, "text", { x: x(t), y: aY + 19, "text-anchor": "middle" }, `${mm}:${ss}`);
+    }
+    // playhead
+    const now = audio.currentTime;
+    if (now >= ws && now <= we) el(dt, "line", { x1: x(now), x2: x(now), y1: 6, y2: aY, stroke: col(cs, "--accent"), "stroke-width": 2 });
+  }
+
+  function scores() {
+    const { d, m } = matchInfo();
+    const np = d.preds.length, ng = d.gt.length, tp = m.TP;
+    const P = np ? tp / np : 0, R = ng ? tp / ng : 0, F = P + R ? 2 * P * R / (P + R) : 0;
+    document.getElementById("s-gt").textContent = ng;
+    document.getElementById("s-pred").textContent = np;
+    document.getElementById("s-tp").textContent = tp;
+    document.getElementById("s-fpfn").textContent = m.FP + " / " + m.FN;
+    document.getElementById("s-pr").textContent = P.toFixed(2) + " / " + R.toFixed(2);
+    document.getElementById("s-f1").textContent = F.toFixed(2);
+  }
+
+  function follow() {
+    const D = dur(), t = audio.currentTime;
+    if (t < state.winStart + 2 || t > state.winStart + WIN - 6) state.winStart = Math.max(0, Math.min(D - WIN, t - 8));
+  }
+  function render() { drawOverview(); drawDetail(); scores(); }
+
+  let raf = null;
+  function loop() { follow(); render(); raf = audio.paused ? null : requestAnimationFrame(loop); }
+  audio.addEventListener("play", () => { if (!raf) raf = requestAnimationFrame(loop); });
+  audio.addEventListener("seeked", () => { follow(); render(); });
+  audio.addEventListener("loadedmetadata", render);
+
+  function seekFromEvent(ev, svg, toTime) {
+    const r = svg.getBoundingClientRect();
+    const vx = ((ev.clientX - r.left) / r.width) * 1000;
+    if (vx < X0 || vx > X1) return;
+    const t = toTime((vx - X0) / (X1 - X0));
+    state.winStart = Math.max(0, Math.min(dur() - WIN, t - WIN / 2));
+    audio.currentTime = Math.max(0, Math.min(dur(), t));
+    render();
+  }
+  ov.addEventListener("click", ev => seekFromEvent(ev, ov, f => f * dur()));
+  dt.addEventListener("click", ev => {
+    const r = dt.getBoundingClientRect(), vx = ((ev.clientX - r.left) / r.width) * 1000;
+    if (vx < X0 || vx > X1) return;
+    audio.currentTime = state.winStart + ((vx - X0) / (X1 - X0)) * WIN; render();
+  });
+
+  const tabs = document.getElementById("tabs");
+  function select(id) {
+    state.sid = id; state.winStart = 0;
+    tabs.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", b.dataset.id === id));
+    document.getElementById("session-note").textContent = NOTES[id];
+    audio.src = "demo/audio/" + id + ".mp3";
+    render();
+  }
+  ORDER.forEach(o => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "tab"; b.setAttribute("role", "tab"); b.dataset.id = o.id;
+    b.innerHTML = `<span class="id">${o.id}</span><span class="sub">${o.sub}</span>`;
+    b.addEventListener("click", () => select(o.id));
+    tabs.appendChild(b);
+  });
+  document.querySelectorAll(".tol").forEach(b => b.addEventListener("click", () => {
+    state.tol = b.dataset.tol;
+    document.querySelectorAll(".tol").forEach(o => o.setAttribute("aria-pressed", o === b));
+    render();
+  }));
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
+  new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+  document.getElementById("copy-bib").addEventListener("click", ev => {
+    const btn = ev.currentTarget, pre = document.getElementById("bib");
+    navigator.clipboard.writeText(pre.textContent).then(() => { btn.textContent = "Copied"; setTimeout(() => btn.textContent = "Copy", 1500); })
+      .catch(() => { const r = document.createRange(); r.selectNodeContents(pre); const s = getSelection(); s.removeAllRanges(); s.addRange(r); });
+  });
+
+  select(state.sid);
+})();
+</script>
+</body>
+</html>
