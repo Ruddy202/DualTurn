@@ -210,9 +210,16 @@ DualTurn/
 
 ## Citation
 
-The BibTeX entry will be added once the paper is published. Until then, cite the paper by title:
-
-> *Leveraging Dual-Process Theory for Multimodal Multiparty Turn-Taking Prediction Using Acoustic and Linguistic Information.*
+```bibtex
+@misc{patamia2026dualturn,
+  title  = {Leveraging Dual-Process Theory for Multimodal Multiparty
+            Turn-Taking Prediction Using Acoustic and Linguistic Information},
+  author = {Patamia, Rutherford A. and Liu, Ming and Luo, Wei and
+            Ekong, Favour and Mohammed, Rehan and Liu, Gang and Cosgun, Akan},
+  year   = {2026},
+  note   = {Manuscript}
+}
+```
 
 ## License
 
