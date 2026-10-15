@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520" role="img">
+<rect width="900" height="520" fill="white"/>
+<text x="450" y="42" text-anchor="middle" font-family="Arial" font-size="26" font-weight="700">Candidate-discovery and confirmation funnel</text>
+<line x1="105" y1="430" x2="850" y2="430" stroke="#111827" stroke-width="2"/>
+<line x1="105" y1="80" x2="105" y2="430" stroke="#111827" stroke-width="2"/>
+<text x="28" y="270" transform="rotate(-90 28 270)" font-family="Arial" font-size="16" fill="#374151">Count (log scale)</text>
+<g fill="#4e79a7">
+<rect x="160" y="95" width="110" height="335"/><rect x="345" y="310" width="110" height="120"/><rect x="530" y="300" width="110" height="130"/><rect x="715" y="350" width="110" height="80"/>
+</g>
+<g font-family="Arial" font-size="18" font-weight="700" text-anchor="middle" fill="#111827">
+<text x="215" y="86">80,012</text><text x="400" y="300">6,092</text><text x="585" y="290">6,731</text><text x="770" y="340">3,609</text>
+</g>
+<g font-family="Arial" font-size="14" text-anchor="middle" fill="#111827">
+<text x="215" y="458">System 1</text><text x="215" y="477">candidates</text>
+<text x="400" y="452">GT events within</text><text x="400" y="471">candidate tolerance</text>
+<text x="585" y="452">Final accepted</text><text x="585" y="471">predictions</text>
+<text x="770" y="452">Strict matched</text><text x="770" y="471">events</text>
+</g>
+</svg>
