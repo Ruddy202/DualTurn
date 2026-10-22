@@ -1,26 +1,118 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img">
-<rect width="1200" height="600" fill="white"/>
-<text x="300" y="38" text-anchor="middle" font-family="Arial" font-size="24" font-weight="700">(a) Post-hoc seven-group evaluation</text>
-<text x="900" y="38" text-anchor="middle" font-family="Arial" font-size="24" font-weight="700">(b) Fixed-configuration ablation</text>
-<line x1="80" y1="500" x2="560" y2="500" stroke="#111827" stroke-width="2"/><line x1="80" y1="90" x2="80" y2="500" stroke="#111827" stroke-width="2"/>
-<g stroke="#e5e7eb"><line x1="80" y1="420" x2="560" y2="420"/><line x1="80" y1="340" x2="560" y2="340"/><line x1="80" y1="260" x2="560" y2="260"/><line x1="80" y1="180" x2="560" y2="180"/><line x1="80" y1="100" x2="560" y2="100"/></g>
-<g font-family="Arial" font-size="13" fill="#374151"><text x="62" y="505" text-anchor="end">0.2</text><text x="62" y="425" text-anchor="end">0.3</text><text x="62" y="345" text-anchor="end">0.4</text><text x="62" y="265" text-anchor="end">0.5</text><text x="62" y="185" text-anchor="end">0.6</text></g>
-<g fill="none" stroke-width="4">
-<polyline points="150,386 320,309 490,257" stroke="#4e79a7"/><polyline points="150,455 320,383 490,318" stroke="#f28e2b"/><polyline points="150,355 320,281 490,218" stroke="#59a14f"/><polyline points="150,384 320,302 490,248" stroke="#e15759"/>
-</g>
-<g fill="#4e79a7"><circle cx="150" cy="386" r="6"/><circle cx="320" cy="309" r="6"/><circle cx="490" cy="257" r="6"/></g>
-<g fill="#f28e2b"><circle cx="150" cy="455" r="6"/><circle cx="320" cy="383" r="6"/><circle cx="490" cy="318" r="6"/></g>
-<g fill="#59a14f"><circle cx="150" cy="355" r="6"/><circle cx="320" cy="281" r="6"/><circle cx="490" cy="218" r="6"/></g>
-<g fill="#e15759"><circle cx="150" cy="384" r="6"/><circle cx="320" cy="302" r="6"/><circle cx="490" cy="248" r="6"/></g>
-<g font-family="Arial" font-size="14" text-anchor="middle"><text x="150" y="525">±0.50 s</text><text x="320" y="525">±0.70 s</text><text x="490" y="525">±1.00 s</text></g>
-<g font-family="Arial" font-size="13"><rect x="120" y="550" width="14" height="14" fill="#4e79a7"/><text x="140" y="562">Proposed dual-process</text><rect x="280" y="550" width="14" height="14" fill="#f28e2b"/><text x="300" y="562">Lee et al. (automatic)</text><rect x="440" y="550" width="14" height="14" fill="#59a14f"/><text x="460" y="562">Triadic VAP</text><rect x="540" y="550" width="14" height="14" fill="#e15759"/><text x="560" y="562">MuVAP</text></g>
-<line x1="660" y1="500" x2="1160" y2="500" stroke="#111827" stroke-width="2"/><line x1="660" y1="90" x2="660" y2="500" stroke="#111827" stroke-width="2"/>
-<g stroke="#e5e7eb"><line x1="660" y1="420" x2="1160" y2="420"/><line x1="660" y1="340" x2="1160" y2="340"/><line x1="660" y1="260" x2="1160" y2="260"/><line x1="660" y1="180" x2="1160" y2="180"/><line x1="660" y1="100" x2="1160" y2="100"/></g>
-<g font-family="Arial" font-size="13" fill="#374151"><text x="646" y="505" text-anchor="end">0.44</text><text x="646" y="425" text-anchor="end">0.46</text><text x="646" y="345" text-anchor="end">0.48</text><text x="646" y="265" text-anchor="end">0.50</text><text x="646" y="185" text-anchor="end">0.52</text><text x="646" y="105" text-anchor="end">0.54</text></g>
-<g fill="#4e79a7">
-<rect x="690" y="220" width="42" height="280"/><rect x="748" y="380" width="42" height="120"/><rect x="806" y="268" width="42" height="232"/><rect x="864" y="204" width="42" height="296"/><rect x="922" y="276" width="42" height="224"/><rect x="980" y="224" width="42" height="276"/><rect x="1038" y="204" width="42" height="296"/><rect x="1096" y="336" width="42" height="164"/>
-</g>
-<g font-family="Arial" font-size="11" text-anchor="end" transform="rotate(-55 0 0)">
-<text x="-490" y="100">Full</text><text x="-455" y="147">System 1 only</text><text x="-440" y="195">Learned-audio only</text><text x="-430" y="245">− Gaze</text><text x="-420" y="292">− Motion</text><text x="-410" y="340">− Prosody</text><text x="-400" y="390">− WavLM</text><text x="-390" y="440">− ECAPA</text>
-</g>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="540" viewBox="0 0 1200 540" role="img" aria-labelledby="title desc">
+<title id="title">Multi-TPC cross-group evaluation and selected ablations</title><desc id="desc">Left panel shows four method comparisons across three event-matching tolerances, with standard deviation. Right panel compares five selected ablation conditions. Prosody, WavLM, and ECAPA removal conditions are omitted from this repository view as requested; the manuscript contains the full ablation table.</desc>
+<rect x="0" y="0" width="1200" height="540" rx="0" fill="#ffffff"/>
+<text x="295" y="34" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#17233b" text-anchor="middle">(a) Post-hoc seven-group evaluation</text>
+<text x="895" y="34" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#17233b" text-anchor="middle">(b) Selected fixed-configuration ablations</text>
+<line x1="80" y1="432" x2="560" y2="432" stroke="#dce3eb" stroke-width="1"/>
+<text x="69" y="437" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="400" fill="#46566e" text-anchor="end">0.2</text>
+<line x1="80" y1="352" x2="560" y2="352" stroke="#dce3eb" stroke-width="1"/>
+<text x="69" y="357" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="400" fill="#46566e" text-anchor="end">0.3</text>
+<line x1="80" y1="272" x2="560" y2="272" stroke="#dce3eb" stroke-width="1"/>
+<text x="69" y="277" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="400" fill="#46566e" text-anchor="end">0.4</text>
+<line x1="80" y1="192" x2="560" y2="192" stroke="#dce3eb" stroke-width="1"/>
+<text x="69" y="197" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="400" fill="#46566e" text-anchor="end">0.5</text>
+<line x1="80" y1="112" x2="560" y2="112" stroke="#dce3eb" stroke-width="1"/>
+<text x="69" y="117" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="400" fill="#46566e" text-anchor="end">0.6</text>
+<line x1="80" y1="72" x2="80" y2="432" stroke="#344159" stroke-width="2"/>
+<line x1="80" y1="432" x2="560" y2="432" stroke="#344159" stroke-width="2"/>
+<text x="16" y="275" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="400" fill="#334155" text-anchor="middle" transform="rotate(-90 16 275)">Outer-group mean Task C F1</text>
+<text x="132" y="456" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="400" fill="#17233b" text-anchor="middle">0.50</text>
+<text x="322" y="456" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="400" fill="#17233b" text-anchor="middle">0.70</text>
+<text x="512" y="456" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="400" fill="#17233b" text-anchor="middle">1.00</text>
+<text x="320" y="484" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="400" fill="#17233b" text-anchor="middle">Matching tolerance (s)</text>
+<polyline points="132,317.59999999999997 322,240.8 512,188.79999999999998" fill="none" stroke="#3477b7" stroke-width="2.6" stroke-linejoin="round"/>
+<line x1="132" y1="285.59999999999997" x2="132" y2="349.59999999999997" stroke="#3477b7" stroke-width="1.3"/>
+<line x1="127" y1="285.59999999999997" x2="137" y2="285.59999999999997" stroke="#3477b7" stroke-width="1.3"/>
+<line x1="127" y1="349.59999999999997" x2="137" y2="349.59999999999997" stroke="#3477b7" stroke-width="1.3"/>
+<circle cx="132" cy="317.59999999999997" r="4.8" fill="#3477b7"/>
+<line x1="322" y1="204.8" x2="322" y2="276.8" stroke="#3477b7" stroke-width="1.3"/>
+<line x1="317" y1="204.8" x2="327" y2="204.8" stroke="#3477b7" stroke-width="1.3"/>
+<line x1="317" y1="276.8" x2="327" y2="276.8" stroke="#3477b7" stroke-width="1.3"/>
+<circle cx="322" cy="240.8" r="4.8" fill="#3477b7"/>
+<line x1="512" y1="148.79999999999998" x2="512" y2="228.79999999999998" stroke="#3477b7" stroke-width="1.3"/>
+<line x1="507" y1="148.79999999999998" x2="517" y2="148.79999999999998" stroke="#3477b7" stroke-width="1.3"/>
+<line x1="507" y1="228.79999999999998" x2="517" y2="228.79999999999998" stroke="#3477b7" stroke-width="1.3"/>
+<circle cx="512" cy="188.79999999999998" r="4.8" fill="#3477b7"/>
+<line x1="114" y1="76" x2="136" y2="76" stroke="#3477b7" stroke-width="3"/>
+<circle cx="125" cy="76" r="3.5" fill="#3477b7"/>
+<text x="143" y="80" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="400" fill="#17233b" text-anchor="start">Proposed dual-process</text>
+<polyline points="132,386.4 322,314.40000000000003 512,249.60000000000002" fill="none" stroke="#db782c" stroke-width="2.6" stroke-linejoin="round"/>
+<line x1="132" y1="363.2" x2="132" y2="409.59999999999997" stroke="#db782c" stroke-width="1.3"/>
+<line x1="127" y1="363.2" x2="137" y2="363.2" stroke="#db782c" stroke-width="1.3"/>
+<line x1="127" y1="409.59999999999997" x2="137" y2="409.59999999999997" stroke="#db782c" stroke-width="1.3"/>
+<circle cx="132" cy="386.4" r="4.8" fill="#db782c"/>
+<line x1="322" y1="284.80000000000007" x2="322" y2="344" stroke="#db782c" stroke-width="1.3"/>
+<line x1="317" y1="284.80000000000007" x2="327" y2="284.80000000000007" stroke="#db782c" stroke-width="1.3"/>
+<line x1="317" y1="344" x2="327" y2="344" stroke="#db782c" stroke-width="1.3"/>
+<circle cx="322" cy="314.40000000000003" r="4.8" fill="#db782c"/>
+<line x1="512" y1="214.40000000000003" x2="512" y2="284.8" stroke="#db782c" stroke-width="1.3"/>
+<line x1="507" y1="214.40000000000003" x2="517" y2="214.40000000000003" stroke="#db782c" stroke-width="1.3"/>
+<line x1="507" y1="284.8" x2="517" y2="284.8" stroke="#db782c" stroke-width="1.3"/>
+<circle cx="512" cy="249.60000000000002" r="4.8" fill="#db782c"/>
+<line x1="334" y1="76" x2="356" y2="76" stroke="#db782c" stroke-width="3"/>
+<circle cx="345" cy="76" r="3.5" fill="#db782c"/>
+<text x="363" y="80" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="400" fill="#17233b" text-anchor="start">Lee et al. (automatic)</text>
+<polyline points="132,286.4 322,212.80000000000004 512,149.59999999999997" fill="none" stroke="#3a9555" stroke-width="2.6" stroke-linejoin="round"/>
+<line x1="132" y1="234.39999999999998" x2="132" y2="338.4" stroke="#3a9555" stroke-width="1.3"/>
+<line x1="127" y1="234.39999999999998" x2="137" y2="234.39999999999998" stroke="#3a9555" stroke-width="1.3"/>
+<line x1="127" y1="338.4" x2="137" y2="338.4" stroke="#3a9555" stroke-width="1.3"/>
+<circle cx="132" cy="286.4" r="4.8" fill="#3a9555"/>
+<line x1="322" y1="152.00000000000003" x2="322" y2="273.6" stroke="#3a9555" stroke-width="1.3"/>
+<line x1="317" y1="152.00000000000003" x2="327" y2="152.00000000000003" stroke="#3a9555" stroke-width="1.3"/>
+<line x1="317" y1="273.6" x2="327" y2="273.6" stroke="#3a9555" stroke-width="1.3"/>
+<circle cx="322" cy="212.80000000000004" r="4.8" fill="#3a9555"/>
+<line x1="512" y1="88.79999999999995" x2="512" y2="210.39999999999998" stroke="#3a9555" stroke-width="1.3"/>
+<line x1="507" y1="88.79999999999995" x2="517" y2="88.79999999999995" stroke="#3a9555" stroke-width="1.3"/>
+<line x1="507" y1="210.39999999999998" x2="517" y2="210.39999999999998" stroke="#3a9555" stroke-width="1.3"/>
+<circle cx="512" cy="149.59999999999997" r="4.8" fill="#3a9555"/>
+<line x1="114" y1="99" x2="136" y2="99" stroke="#3a9555" stroke-width="3"/>
+<circle cx="125" cy="99" r="3.5" fill="#3a9555"/>
+<text x="143" y="103" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="400" fill="#17233b" text-anchor="start">Triadic VAP</text>
+<polyline points="132,315.20000000000005 322,233.6 512,179.20000000000002" fill="none" stroke="#c64b55" stroke-width="2.6" stroke-linejoin="round"/>
+<line x1="132" y1="289.6" x2="132" y2="340.80000000000007" stroke="#c64b55" stroke-width="1.3"/>
+<line x1="127" y1="289.6" x2="137" y2="289.6" stroke="#c64b55" stroke-width="1.3"/>
+<line x1="127" y1="340.80000000000007" x2="137" y2="340.80000000000007" stroke="#c64b55" stroke-width="1.3"/>
+<circle cx="132" cy="315.20000000000005" r="4.8" fill="#c64b55"/>
+<line x1="322" y1="205.6" x2="322" y2="261.6" stroke="#c64b55" stroke-width="1.3"/>
+<line x1="317" y1="205.6" x2="327" y2="205.6" stroke="#c64b55" stroke-width="1.3"/>
+<line x1="317" y1="261.6" x2="327" y2="261.6" stroke="#c64b55" stroke-width="1.3"/>
+<circle cx="322" cy="233.6" r="4.8" fill="#c64b55"/>
+<line x1="512" y1="146.4" x2="512" y2="212.00000000000003" stroke="#c64b55" stroke-width="1.3"/>
+<line x1="507" y1="146.4" x2="517" y2="146.4" stroke="#c64b55" stroke-width="1.3"/>
+<line x1="507" y1="212.00000000000003" x2="517" y2="212.00000000000003" stroke="#c64b55" stroke-width="1.3"/>
+<circle cx="512" cy="179.20000000000002" r="4.8" fill="#c64b55"/>
+<line x1="334" y1="99" x2="356" y2="99" stroke="#c64b55" stroke-width="3"/>
+<circle cx="345" cy="99" r="3.5" fill="#c64b55"/>
+<text x="363" y="103" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="400" fill="#17233b" text-anchor="start">MuVAP</text>
+<line x1="676" y1="432" x2="1161" y2="432" stroke="#dce3eb" stroke-width="1"/>
+<text x="663" y="437" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="400" fill="#46566e" text-anchor="end">0.44</text>
+<line x1="676" y1="359.99999999999994" x2="1161" y2="359.99999999999994" stroke="#dce3eb" stroke-width="1"/>
+<text x="663" y="364.99999999999994" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="400" fill="#46566e" text-anchor="end">0.46</text>
+<line x1="676" y1="288.0000000000001" x2="1161" y2="288.0000000000001" stroke="#dce3eb" stroke-width="1"/>
+<text x="663" y="293.0000000000001" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="400" fill="#46566e" text-anchor="end">0.48</text>
+<line x1="676" y1="216.00000000000009" x2="1161" y2="216.00000000000009" stroke="#dce3eb" stroke-width="1"/>
+<text x="663" y="221.00000000000009" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="400" fill="#46566e" text-anchor="end">0.50</text>
+<line x1="676" y1="144" x2="1161" y2="144" stroke="#dce3eb" stroke-width="1"/>
+<text x="663" y="149" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="400" fill="#46566e" text-anchor="end">0.52</text>
+<line x1="676" y1="72" x2="1161" y2="72" stroke="#dce3eb" stroke-width="1"/>
+<text x="663" y="77" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="400" fill="#46566e" text-anchor="end">0.54</text>
+<line x1="676" y1="72" x2="676" y2="432" stroke="#344159" stroke-width="2"/>
+<line x1="676" y1="432" x2="1161" y2="432" stroke="#344159" stroke-width="2"/>
+<text x="609" y="274" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="400" fill="#334155" text-anchor="middle" transform="rotate(-90 609 274)">Task C F1 at ±1.00 s</text>
+<rect x="695" y="180.00000000000006" width="59" height="251.99999999999994" rx="2" fill="#246f9d"/>
+<text x="724.5" y="172.00000000000006" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="700" fill="#17233b" text-anchor="middle">0.510</text>
+<text x="724.5" y="453" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="400" fill="#17233b" text-anchor="middle">Full</text>
+<rect x="792" y="324.0000000000001" width="59" height="107.99999999999989" rx="2" fill="#5b90b9"/>
+<text x="821.5" y="316.0000000000001" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="400" fill="#17233b" text-anchor="middle">0.470</text>
+<text x="821.5" y="453" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="400" fill="#17233b" text-anchor="middle">System 1 only</text>
+<rect x="889" y="223.2000000000001" width="59" height="208.7999999999999" rx="2" fill="#5b90b9"/>
+<text x="918.5" y="215.2000000000001" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="400" fill="#17233b" text-anchor="middle">0.498</text>
+<text x="918.5" y="453" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="400" fill="#17233b" text-anchor="middle">Audio-only verifier</text>
+<rect x="986" y="165.60000000000002" width="59" height="266.4" rx="2" fill="#5b90b9"/>
+<text x="1015.5" y="157.60000000000002" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="400" fill="#17233b" text-anchor="middle">0.514</text>
+<text x="1015.5" y="453" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="400" fill="#17233b" text-anchor="middle">− Gaze</text>
+<rect x="1083" y="230.4000000000001" width="59" height="201.5999999999999" rx="2" fill="#5b90b9"/>
+<text x="1112.5" y="222.4000000000001" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="400" fill="#17233b" text-anchor="middle">0.496</text>
+<text x="1112.5" y="453" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="400" fill="#17233b" text-anchor="middle">− Motion</text>
+<text x="904" y="504" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="400" fill="#566276" text-anchor="middle">Selected configurations; all conditions are tabulated in the manuscript.</text>
 </svg>
