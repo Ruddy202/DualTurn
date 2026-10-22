@@ -3,7 +3,7 @@
 <desc id="desc">The cross-model agreement groups are English-dominant 123 recordings with 2,139 reference events and F1 0.645, mixed or uncertain 67 with 2,430 events and F1 0.518, and non-English-dominant 34 with 1,779 events and F1 0.488. The non-English minus English F1 difference is -0.158 with whole-recording bootstrap 95% confidence interval -0.208 to -0.104. All 224 saved recording metrics reconcile to 3,609 true positives, 3,122 false positives, and 2,739 false negatives. This is observational, not evidence that language causes the difference.</desc>
 <rect x="0" y="0" width="1200" height="660" fill="#ffffff"/>
 <text x="600" y="48" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="32" font-weight="400" fill="#1c2534">VoxConverse TEST: frozen Task C, by recording language</text>
-<text x="600" y="79" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="400" fill="#465268">Conservative Whisper–VoxLingua107 consensus grouping (80% of speech duration)</text>
+<text x="600" y="79" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="400" fill="#465268">Post-hoc, exploratory · Whisper–VoxLingua107 consensus (80% of speech duration)</text>
 <line x1="100" y1="478" x2="1130" y2="478" stroke="#e3e9ee" stroke-width="1"/>
 <text x="85" y="483" text-anchor="end" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="400" fill="#465268">0.0</text>
 <line x1="100" y1="431.3333333333333" x2="1130" y2="431.3333333333333" stroke="#e3e9ee" stroke-width="1"/>
