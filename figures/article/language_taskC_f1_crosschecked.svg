@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="660" viewBox="0 0 1200 660" role="img" aria-labelledby="title desc">
+<title id="title">VoxConverse TEST frozen Task C event F1 by cross-checked recording language</title>
+<desc id="desc">The cross-model agreement groups are English-dominant 123 recordings with 2,139 reference events and F1 0.645, mixed or uncertain 67 with 2,430 events and F1 0.518, and non-English-dominant 34 with 1,779 events and F1 0.488. The non-English minus English F1 difference is -0.158 with whole-recording bootstrap 95% confidence interval -0.208 to -0.104. All 224 saved recording metrics reconcile to 3,609 true positives, 3,122 false positives, and 2,739 false negatives. This is observational, not evidence that language causes the difference.</desc>
+<rect x="0" y="0" width="1200" height="660" fill="#ffffff"/>
+<text x="600" y="48" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="32" font-weight="400" fill="#1c2534">VoxConverse TEST: frozen Task C, by recording language</text>
+<text x="600" y="79" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="400" fill="#465268">Conservative Whisper–VoxLingua107 consensus grouping (80% of speech duration)</text>
+<line x1="100" y1="478" x2="1130" y2="478" stroke="#e3e9ee" stroke-width="1"/>
+<text x="85" y="483" text-anchor="end" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="400" fill="#465268">0.0</text>
+<line x1="100" y1="431.3333333333333" x2="1130" y2="431.3333333333333" stroke="#e3e9ee" stroke-width="1"/>
+<text x="85" y="436.3333333333333" text-anchor="end" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="400" fill="#465268">0.1</text>
+<line x1="100" y1="384.6666666666667" x2="1130" y2="384.6666666666667" stroke="#e3e9ee" stroke-width="1"/>
+<text x="85" y="389.6666666666667" text-anchor="end" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="400" fill="#465268">0.2</text>
+<line x1="100" y1="338" x2="1130" y2="338" stroke="#e3e9ee" stroke-width="1"/>
+<text x="85" y="343" text-anchor="end" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="400" fill="#465268">0.3</text>
+<line x1="100" y1="291.33333333333337" x2="1130" y2="291.33333333333337" stroke="#e3e9ee" stroke-width="1"/>
+<text x="85" y="296.33333333333337" text-anchor="end" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="400" fill="#465268">0.4</text>
+<line x1="100" y1="244.66666666666669" x2="1130" y2="244.66666666666669" stroke="#e3e9ee" stroke-width="1"/>
+<text x="85" y="249.66666666666669" text-anchor="end" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="400" fill="#465268">0.5</text>
+<line x1="100" y1="197.99999999999994" x2="1130" y2="197.99999999999994" stroke="#e3e9ee" stroke-width="1"/>
+<text x="85" y="202.99999999999994" text-anchor="end" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="400" fill="#465268">0.6</text>
+<line x1="100" y1="151.33333333333331" x2="1130" y2="151.33333333333331" stroke="#e3e9ee" stroke-width="1"/>
+<text x="85" y="156.33333333333331" text-anchor="end" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="400" fill="#465268">0.7</text>
+<line x1="100" y1="128" x2="100" y2="478" stroke="#252d39" stroke-width="2"/>
+<line x1="100" y1="478" x2="1130" y2="478" stroke="#252d39" stroke-width="2"/>
+<text x="29" y="304" font-family="Arial,Helvetica,sans-serif" font-size="20" text-anchor="middle" transform="rotate(-90 29 304)" fill="#242b37">Task C event F1 (±0.50 s)</text>
+<rect x="175" y="176.8292167082106" width="210" height="301.1707832917894" fill="#3975a7"/>
+<text x="280" y="162.8292167082106" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="26" font-weight="700" fill="#101820">0.645</text>
+<text x="280" y="514" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="19" font-weight="400" fill="#1c2534">English-dominant</text>
+<text x="280" y="541" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="15" font-weight="400" fill="#5b6472">123 recordings · 2,139 reference events</text>
+<rect x="510" y="236.37167154607553" width="210" height="241.62832845392447" fill="#939da9"/>
+<text x="615" y="222.37167154607553" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="26" font-weight="700" fill="#101820">0.518</text>
+<text x="615" y="514" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="19" font-weight="400" fill="#1c2534">Mixed / uncertain</text>
+<text x="615" y="541" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="15" font-weight="400" fill="#5b6472">67 recordings · 2,430 reference events</text>
+<rect x="845" y="250.4339169241332" width="210" height="227.5660830758668" fill="#d0843c"/>
+<text x="950" y="236.4339169241332" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="26" font-weight="700" fill="#101820">0.488</text>
+<text x="950" y="514" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="19" font-weight="400" fill="#1c2534">Non-English-dominant</text>
+<text x="950" y="541" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="15" font-weight="400" fill="#5b6472">34 recordings · 1,779 reference events</text>
+<text x="600" y="598" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="18" font-weight="400" fill="#39475d">Non-English − English F1: −0.158 (95% recording-bootstrap CI: −0.208 to −0.104)</text>
+<text x="600" y="626" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="400" fill="#616e81">224/232 TEST recordings have saved session metrics; uncertain includes incomplete label consensus.</text>
+<text x="600" y="644" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="400" fill="#616e81">Language labels are model estimates; the observed association is not causal.</text>
+</svg>
