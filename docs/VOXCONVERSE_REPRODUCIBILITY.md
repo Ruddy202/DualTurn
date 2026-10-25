@@ -13,7 +13,7 @@ VoxConverse is distributed by its authors:
 From the repository root, the following commands build the default layout:
 
 ```bash
-mkdir -p data/voxconverse/voxconverse_dev_wav/audio |data/voxconverse/voxconverse_test_wav/audio |data/voxconverse/labels
+mkdir -p data/voxconverse/voxconverse_dev_wav/audio data/voxconverse/voxconverse_test_wav/audio data/voxconverse/labels
 wget https://www.robots.ox.ac.uk/~vgg/data/voxconverse/data/voxconverse_dev_wav.zip
 wget https://www.robots.ox.ac.uk/~vgg/data/voxconverse/data/voxconverse_test_wav.zip
 unzip -q voxconverse_dev_wav.zip -d data/voxconverse/voxconverse_dev_wav/audio
@@ -38,7 +38,20 @@ These paths are the defaults; you can change them with the environment variables
 
 `diffusion_beds_16k/` holds the 96 background recordings mixed in by waveform augmentation. They are not part of VoxConverse and are not included here. If the folder is empty or missing, the notebooks skip bed mixing and print a warning. Random gain and Gaussian noise are still applied.
 
-**Reproducibility limitation:** The 96 diffusion-generated background-bed audio files used for the submitted waveform-augmentation condition are not distributed here, and this repository does not supply a verified regeneration recipe that reproduces those exact files. An experiment run without them is not an exact reproduction of the submitted full waveform-augmentation condition. Obtain the original licensed beds and place them in this folder before claiming an exact replication.
+### Regenerating the diffusion background beds
+
+The archived completed generation used `cvssp/audioldm2` with seven ambience prompts, 96 mono recordings of 30 seconds, 30 diffusion steps, guidance 3.5, and per-bed seed `12345 + index`. To regenerate compatible beds, install `diffusers` and `accelerate` alongside the project requirements, then run from the repository root:
+
+```bash
+python scripts/generate_diffusion_beds.py --output data/voxconverse/diffusion_beds_16k
+```
+
+The script writes `bed_0000.wav`–`bed_0095.wav` as mono 16 kHz PCM-16 audio and skips existing valid files unless `--overwrite` is specified. The archived source included a GPT-2 language-model compatibility replacement and text-feature output patch, which are retained in the cleaned generator.
+
+**Reproduction limits:** The archived generation did not pin a Hugging Face model revision or complete package versions, so regenerated WAVs are not guaranteed to be bitwise identical to the originals. The original 96 WAVs are not included here.
+
+**Archival mixing provenance, not an assertion about the final TASLP run:** A separate earlier `augment_vap_train_only.py` pipeline mixed one randomly chosen bed into training audio with probability 0.6 and uniformly sampled bed SNR of 10–25 dB. It used global seed 1337 combined with the session ID, tiled or cropped beds to recording duration, and mixed a common bed segment into both channels with per-channel RMS scaling (signal floor 0.02). It also applied gain, Gaussian noise and mild filtering. This older VAP-specific script does not, by itself, establish every augmentation choice used in the submitted DualTurn experiments.
+
 
 ## 2. Split
 
