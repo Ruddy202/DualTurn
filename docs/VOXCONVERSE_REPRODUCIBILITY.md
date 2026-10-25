@@ -13,7 +13,7 @@ VoxConverse is distributed by its authors:
 From the repository root, the following commands build the default layout:
 
 ```bash
-mkdir -p data/voxconverse/voxconverse_dev_wav/audio data/voxconverse/voxconverse_test_wav/audio data/voxconverse/labels
+mkdir -p data/voxconverse/voxconverse_dev_wav/audio |data/voxconverse/voxconverse_test_wav/audio |data/voxconverse/labels
 wget https://www.robots.ox.ac.uk/~vgg/data/voxconverse/data/voxconverse_dev_wav.zip
 wget https://www.robots.ox.ac.uk/~vgg/data/voxconverse/data/voxconverse_test_wav.zip
 unzip -q voxconverse_dev_wav.zip -d data/voxconverse/voxconverse_dev_wav/audio
