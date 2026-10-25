@@ -130,6 +130,8 @@ data/voxconverse/
 └── diffusion_beds_16k/            # background beds for waveform augmentation (optional)
 ```
 
+To regenerate the 96 AudioLDM2 ambience beds used for background mixing, install `diffusers` and `accelerate` and run `python scripts/generate_diffusion_beds.py`. The generator follows the archived settings but does not guarantee bitwise-identical recordings because the original model revision and package versions were not pinned. Details and original mixing provenance are in [the VoxConverse reproducibility guide](docs/VOXCONVERSE_REPRODUCIBILITY.md#1-data).
+
 Download commands that produce this layout are in [`docs/VOXCONVERSE_REPRODUCIBILITY.md`](docs/VOXCONVERSE_REPRODUCIBILITY.md#1-data). For Multi-TPC, point `MULTITPC_ROOT` at the extracted Zenodo archive.
 
 ## Reproducing the VoxConverse experiments
@@ -197,6 +199,7 @@ DualTurn/
 ├── LICENSE
 ├── README.md
 ├── requirements.txt
+├── scripts/generate_diffusion_beds.py  # AudioLDM2 background-bed generator
 ├── configs/voxconverse/          # fixed TRAIN/VAL session lists
 ├── notebooks/
 │   ├── voxconverse/              # 5 notebooks
