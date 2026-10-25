@@ -38,6 +38,8 @@ These paths are the defaults; you can change them with the environment variables
 
 `diffusion_beds_16k/` holds the 96 background recordings mixed in by waveform augmentation. They are not part of VoxConverse and are not included here. If the folder is empty or missing, the notebooks skip bed mixing and print a warning. Random gain and Gaussian noise are still applied.
 
+**Reproducibility limitation:** The 96 diffusion-generated background-bed audio files used for the submitted waveform-augmentation condition are not distributed here, and this repository does not supply a verified regeneration recipe that reproduces those exact files. An experiment run without them is not an exact reproduction of the submitted full waveform-augmentation condition. Obtain the original licensed beds and place them in this folder before claiming an exact replication.
+
 ## 2. Split
 
 | Partition | Sessions | Source |
@@ -131,7 +133,7 @@ Each run directory contains trained models (`models/`), TEST metrics (`eval/`) a
 | Synthetic only | ✓ | ✓ | |
 | Waveform augmentation | ✓ | | ✓ |
 
-Waveform augmentation uses random gain, Gaussian noise and background-bed mixing. All three keep the original timing; the experiments do not use speed perturbation or time shifting.
+Waveform augmentation includes random gain, Gaussian noise and background-bed mixing. **Speed/time transformations require source-level verification:** the earlier documentation stated that speed perturbation and time shifting were not used, whereas the submitted manuscript's augmentation description indicates speed perturbation. The available notebook content could not be reliably inspected here to resolve this discrepancy. Do not treat this documentation as an authoritative confirmation of either claim until the executed configuration and notebook source are checked against the submitted article.
 
 ## 7. Evaluation settings
 
