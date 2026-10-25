@@ -2,7 +2,7 @@
 
 Code for the paper:
 
-**Leveraging Dual-Process Theory for Multimodal Multiparty Turn-Taking Prediction Using Acoustic and Linguistic Information**
+**Leveraging Dual-Process Theory for Multimodal Multiparty Turn-Taking Prediction**
 
 DualTurn predicts floor transfers in multiparty conversation in two stages. A fast discovery stage (System 1) proposes candidate transition points on the continuous timeline. A selective verification stage (System 2) then accepts or rejects each candidate using acoustic, linguistic and, for Multi-TPC, visual and motion evidence.
 
@@ -114,6 +114,8 @@ export HF_TOKEN=<your Hugging Face token>
 
 The datasets are not redistributed here.
 
+**Audio-demo release gate:** The website branch contains five VoxConverse TEST audio excerpts. These recordings must not be publicly served until rights to redistribute the individual excerpts have been confirmed, including any conditions associated with the underlying source videos. Attribution on the website is not itself proof of redistribution permission. The website should remain undeployed until this check is complete.
+
 - **VoxConverse**: [RTTM annotations (v0.3)](https://github.com/joonson/voxconverse), [DEV audio](https://www.robots.ox.ac.uk/~vgg/data/voxconverse/data/voxconverse_dev_wav.zip), [TEST audio](https://www.robots.ox.ac.uk/~vgg/data/voxconverse/data/voxconverse_test_wav.zip). DEV is split into TRAIN/VAL; the official TEST partition is used for TEST.
 - **Multi-TPC**: [Zenodo (doi:10.5281/zenodo.17935560)](https://doi.org/10.5281/zenodo.17935560). The experiments use 23 complete sessions from seven triadic groups.
 
@@ -156,7 +158,7 @@ export MULTITPC_ROOT=/path/to/Multi-TPC
 
 - **Seven-group nested evaluation:** run `multitpc_seven_group_evaluation.ipynb`. It fits and evaluates every outer fold from the raw corpus. This is the longest run in the repository (several days on one GPU).
 - **Ablations:** run `multitpc_ablation.ipynb` after the seven-group notebook. It reuses the selected full configuration and feature caches. Without them, it first repeats the nested selection for the full model.
-- **Group-disjoint held-out evaluation:** `multitpc_heldout_evaluation.ipynb` scores the TEST group with models and comparator settings frozen during development. Those frozen files are not included in this repository; the notebook stops with an error if they are missing. The files it expects are listed in [`docs/MULTITPC_REPRODUCIBILITY.md`](docs/MULTITPC_REPRODUCIBILITY.md).
+- **Group-disjoint held-out evaluation:** `multitpc_heldout_evaluation.ipynb` scores the TEST group with models and comparator settings frozen during development. Those frozen files are not included in this repository; the notebook stops with an error if they are missing. The files it expects are listed in [`docs/MULTITPC_REPRODUCIBILITY.md`](docs/MULTITPC_REPRODUCIBILITY.md). **Reproducibility limitation:** the published code alone cannot reproduce the original held-out result without these frozen development artifacts. No substitute artifacts or recreated checkpoints should be treated as identical to the original evaluation.
 
 The MuVAP comparator uses the source vendored in `third_party/muvap/MuVAP-main/` (upstream commit `a1ef9c8`, MIT licence).
 
@@ -217,7 +219,7 @@ DualTurn/
   author = {Patamia, Rutherford A. and Liu, Ming and Luo, Wei and
             Ekong, Favour and Mohammed, Rehan and Liu, Gang and Cosgun, Akan},
   year   = {2026},
-  note   = {Manuscript}
+  note   = {Submitted to IEEE/ACM Transactions on Audio, Speech, and Language Processing, 2026}
 }
 ```
 
