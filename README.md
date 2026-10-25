@@ -2,7 +2,7 @@
 
 Code for the paper:
 
-**Leveraging Dual-Process Theory for Multimodal Multiparty Turn-Taking Prediction Using Acoustic and Linguistic Information**
+**Leveraging Dual-Process Theory for Multimodal Multiparty Turn-Taking Prediction**
 
 DualTurn predicts floor transfers in multiparty conversation in two stages. A fast discovery stage (System 1) proposes candidate transition points on the continuous timeline. A selective verification stage (System 2) then accepts or rejects each candidate using acoustic, linguistic and, for Multi-TPC, visual and motion evidence.
 
@@ -114,6 +114,8 @@ export HF_TOKEN=<your Hugging Face token>
 
 The datasets are not redistributed here.
 
+**Audio-demo release gate:** The website branch contains five VoxConverse TEST audio excerpts. These recordings must not be publicly served until rights to redistribute the individual excerpts have been confirmed, including any conditions associated with the underlying source videos. Attribution on the website is not itself proof of redistribution permission. The website should remain undeployed until this check is complete.
+
 - **VoxConverse**: [RTTM annotations (v0.3)](https://github.com/joonson/voxconverse), [DEV audio](https://www.robots.ox.ac.uk/~vgg/data/voxconverse/data/voxconverse_dev_wav.zip), [TEST audio](https://www.robots.ox.ac.uk/~vgg/data/voxconverse/data/voxconverse_test_wav.zip). DEV is split into TRAIN/VAL; the official TEST partition is used for TEST.
 - **Multi-TPC**: [Zenodo (doi:10.5281/zenodo.17935560)](https://doi.org/10.5281/zenodo.17935560). The experiments use 23 complete sessions from seven triadic groups.
 
@@ -212,7 +214,7 @@ DualTurn/
 
 The BibTeX entry will be added once the paper is published. Until then, cite the paper by title:
 
-> *Leveraging Dual-Process Theory for Multimodal Multiparty Turn-Taking Prediction Using Acoustic and Linguistic Information.*
+> *Leveraging Dual-Process Theory for Multimodal Multiparty Turn-Taking Prediction.*
 
 ## License
 
