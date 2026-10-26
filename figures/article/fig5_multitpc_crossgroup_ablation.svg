@@ -114,5 +114,6 @@
 <rect x="1083" y="230.4000000000001" width="59" height="201.5999999999999" rx="2" fill="#5b90b9"/>
 <text x="1112.5" y="222.4000000000001" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="400" fill="#17233b" text-anchor="middle">0.496</text>
 <text x="1112.5" y="453" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="400" fill="#17233b" text-anchor="middle">− Motion</text>
-<text x="904" y="504" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="400" fill="#566276" text-anchor="middle">Selected configurations; all conditions are tabulated in the manuscript.</text>
+<text x="904" y="494" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="400" fill="#566276" text-anchor="middle">Full = one configuration fixed across groups (0.510); the nested headline (0.504) re-selects it per group.</text>
+<text x="904" y="514" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="400" fill="#566276" text-anchor="middle">Selected conditions; all are tabulated in the manuscript.</text>
 </svg>

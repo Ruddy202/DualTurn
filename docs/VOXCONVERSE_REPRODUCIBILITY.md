@@ -40,7 +40,7 @@ These paths are the defaults; you can change them with the environment variables
 
 ### Regenerating the diffusion background beds
 
-The archived completed generation used `cvssp/audioldm2` with seven ambience prompts, 96 mono recordings of 30 seconds, 30 diffusion steps, guidance 3.5, and per-bed seed `12345 + index`. To regenerate compatible beds, install `diffusers` and `accelerate` alongside the project requirements, then run from the repository root:
+The archived completed generation used `cvssp/audioldm2` with seven ambience prompts, 96 mono recordings of 30 seconds, 30 diffusion steps, guidance 3.5, and per-bed seed `12345 + index`. To regenerate compatible beds, install the optional packages listed at the end of `requirements.txt` (`diffusers`, `accelerate`), then run from the repository root:
 
 ```bash
 python scripts/generate_diffusion_beds.py --output data/voxconverse/diffusion_beds_16k

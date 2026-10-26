@@ -7,7 +7,7 @@ Code for the paper:
 DualTurn predicts floor transfers in multiparty conversation in two stages. A fast discovery stage (System 1) proposes candidate transition points on the continuous timeline. A selective verification stage (System 2) then accepts or rejects each candidate using acoustic, linguistic and, for Multi-TPC, visual and motion evidence.
 
 <p align="center">
-  <img src="figures/readme/dualturn_overview.svg" width="950" alt="DualTurn discovery and verification architecture">
+  <img src="figures/article/fig2_dual_process_architecture.svg" width="950" alt="DualTurn discovery and verification architecture">
 </p>
 
 ## Contents
@@ -36,7 +36,7 @@ DualTurn predicts floor transfers in multiparty conversation in two stages. A fa
 Task C matches predicted and reference events one-to-one within a temporal tolerance of ±0.50 s, ±0.70 s or ±1.00 s.
 
 <p align="center">
-  <img src="figures/readme/tasks_abc.svg" width="950" alt="Task A, Task B and Task C evaluation settings">
+  <img src="figures/article/fig1_tasks_abc.svg" width="950" alt="Task A, Task B and Task C evaluation settings">
 </p>
 
 Reference events are derived from speaker activity and labelled as normal turn transfers (NTT), interruptions (ITT), backchannels (BC), brief interjections (BI) or continuations (HOLD). Only NTT and ITT count as SHIFT events for Task C. A response shorter than 0.50 s that does not take the floor is a BC or BI.
@@ -114,7 +114,7 @@ export HF_TOKEN=<your Hugging Face token>
 
 The datasets are not redistributed here.
 
-**Audio-demo release gate:** The website branch contains five VoxConverse TEST audio excerpts. These recordings must not be publicly served until rights to redistribute the individual excerpts have been confirmed, including any conditions associated with the underlying source videos. Attribution on the website is not itself proof of redistribution permission. The website should remain undeployed until this check is complete.
+The project website (branch `archive-v1`) contains five VoxConverse TEST audio excerpts and stays unpublished until redistribution rights for those excerpts are confirmed.
 
 - **VoxConverse**: [RTTM annotations (v0.3)](https://github.com/joonson/voxconverse), [DEV audio](https://www.robots.ox.ac.uk/~vgg/data/voxconverse/data/voxconverse_dev_wav.zip), [TEST audio](https://www.robots.ox.ac.uk/~vgg/data/voxconverse/data/voxconverse_test_wav.zip). DEV is split into TRAIN/VAL; the official TEST partition is used for TEST.
 - **Multi-TPC**: [Zenodo (doi:10.5281/zenodo.17935560)](https://doi.org/10.5281/zenodo.17935560). The experiments use 23 complete sessions from seven triadic groups.
@@ -130,7 +130,7 @@ data/voxconverse/
 └── diffusion_beds_16k/            # background beds for waveform augmentation (optional)
 ```
 
-To regenerate the 96 AudioLDM2 ambience beds used for background mixing, install `diffusers` and `accelerate` and run `python scripts/generate_diffusion_beds.py`. The generator follows the archived settings but does not guarantee bitwise-identical recordings because the original model revision and package versions were not pinned. Details and original mixing provenance are in [the VoxConverse reproducibility guide](docs/VOXCONVERSE_REPRODUCIBILITY.md#1-data).
+To regenerate the 96 AudioLDM2 ambience beds used for background mixing, install the optional packages listed at the end of `requirements.txt` (`diffusers`, `accelerate`) and run `python scripts/generate_diffusion_beds.py`. The generator follows the archived settings but does not guarantee bitwise-identical recordings because the original model revision and package versions were not pinned. Details and original mixing provenance are in [the VoxConverse reproducibility guide](docs/VOXCONVERSE_REPRODUCIBILITY.md#1-data).
 
 Download commands that produce this layout are in [`docs/VOXCONVERSE_REPRODUCIBILITY.md`](docs/VOXCONVERSE_REPRODUCIBILITY.md#1-data). For Multi-TPC, point `MULTITPC_ROOT` at the extracted Zenodo archive.
 
@@ -160,7 +160,7 @@ export MULTITPC_ROOT=/path/to/Multi-TPC
 
 - **Seven-group nested evaluation:** run `multitpc_seven_group_evaluation.ipynb`. It fits and evaluates every outer fold from the raw corpus. This is the longest run in the repository (several days on one GPU).
 - **Ablations:** run `multitpc_ablation.ipynb` after the seven-group notebook. It reuses the selected full configuration and feature caches. Without them, it first repeats the nested selection for the full model.
-- **Group-disjoint held-out evaluation:** `multitpc_heldout_evaluation.ipynb` scores the TEST group with models and comparator settings frozen during development. Those frozen files are not included in this repository; the notebook stops with an error if they are missing. The files it expects are listed in [`docs/MULTITPC_REPRODUCIBILITY.md`](docs/MULTITPC_REPRODUCIBILITY.md). **Reproducibility limitation:** the published code alone cannot reproduce the original held-out result without these frozen development artifacts. No substitute artifacts or recreated checkpoints should be treated as identical to the original evaluation.
+- **Group-disjoint held-out evaluation:** `multitpc_heldout_evaluation.ipynb` scores the TEST group with models and comparator settings frozen during development. Those frozen files are not included in this repository; the notebook stops with an error if they are missing. The files it expects are listed in [`docs/MULTITPC_REPRODUCIBILITY.md`](docs/MULTITPC_REPRODUCIBILITY.md). Retraining replacements for these files would be a new experiment, not a reproduction of the reported held-out result.
 
 The MuVAP comparator uses the source vendored in `third_party/muvap/MuVAP-main/` (upstream commit `a1ef9c8`, MIT licence).
 
@@ -207,7 +207,9 @@ DualTurn/
 ├── docs/
 │   ├── VOXCONVERSE_REPRODUCIBILITY.md
 │   └── MULTITPC_REPRODUCIBILITY.md
-├── figures/readme/               # figures used in this README
+├── figures/
+│   ├── article/                  # figures from the paper (two are also shown in this README)
+│   └── readme/                   # protocol figures used only in this README
 └── third_party/muvap/            # vendored MuVAP source (MIT)
 ```
 

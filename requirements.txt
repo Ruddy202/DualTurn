@@ -29,3 +29,6 @@ speechbrain
 
 jupyter
 ipython
+
+# Optional: only for scripts/generate_diffusion_beds.py (background-bed regeneration)
+# pip install diffusers accelerate
