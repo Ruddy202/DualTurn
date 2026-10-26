@@ -160,7 +160,7 @@ export MULTITPC_ROOT=/path/to/Multi-TPC
 
 - **Seven-group nested evaluation:** run `multitpc_seven_group_evaluation.ipynb`. It fits and evaluates every outer fold from the raw corpus. This is the longest run in the repository (several days on one GPU).
 - **Ablations:** run `multitpc_ablation.ipynb` after the seven-group notebook. It reuses the selected full configuration and feature caches. Without them, it first repeats the nested selection for the full model.
-- **Group-disjoint held-out evaluation:** `multitpc_heldout_evaluation.ipynb` scores the TEST group with models and comparator settings frozen during development. Those frozen files are not included in this repository; the notebook stops with an error if they are missing. The files it expects are listed in [`docs/MULTITPC_REPRODUCIBILITY.md`](docs/MULTITPC_REPRODUCIBILITY.md). Retraining replacements for these files would be a new experiment, not a reproduction of the reported held-out result.
+- **Group-disjoint held-out evaluation:** `multitpc_heldout_evaluation.ipynb` scores the TEST group with models and comparator settings frozen during development. Evaluation notebooks, data splits and configurations are released in this repository; the frozen held-out model files are available from the authors on request. The notebook stops with an error if they are missing. The files it expects are listed in [`docs/MULTITPC_REPRODUCIBILITY.md`](docs/MULTITPC_REPRODUCIBILITY.md). Retraining replacements for these files would be a new experiment, not a reproduction of the reported held-out result.
 
 The MuVAP comparator uses the source vendored in `third_party/muvap/MuVAP-main/` (upstream commit `a1ef9c8`, MIT licence).
 

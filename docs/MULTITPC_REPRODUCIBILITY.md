@@ -62,7 +62,7 @@ The seven-group and ablation notebooks hash their own source code into the run-d
 
 The held-out notebook does not train the proposed system. It loads the models and comparator settings frozen during development, checks their SHA-256 hashes and code fingerprints, and scores the TEST group once. These files are not included in this repository. Without them, the notebook stops before scoring.
 
-Retraining replacements for these files would be a new experiment, not a reproduction of the reported result; the seven-group and ablation notebooks run without them.
+The frozen held-out model files are available from the authors on request. Retraining replacements for them would be a new experiment, not a reproduction of the reported result; the seven-group and ablation notebooks run without them.
 
 Expected locations, relative to `$MULTITPC_ROOT/runs/MultiTPC_MASTER_R11_TASKABC_AUX_AUDIO_V7/`:
 
