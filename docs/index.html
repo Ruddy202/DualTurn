@@ -76,8 +76,6 @@ h1 .name { color: var(--accent); }
 .tab[aria-selected="true"] .id { color: var(--accent); }
 
 .session-note { font-size: 14.5px; margin-bottom: 12px; max-width: 72ch; }
-.row { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; margin-bottom: 12px; }
-.row audio { flex: 1 1 320px; min-width: 0; height: 40px; }
 .ctrl { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .ctrl .lbl { font-size: 13px; font-weight: 600; }
 .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
@@ -85,13 +83,38 @@ h1 .name { color: var(--accent); }
 .seg button + button { border-left: 1px solid var(--line); }
 .seg button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
 
-.tl-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); }
-.tl-wrap svg { display: block; width: 100%; min-width: 700px; height: auto; }
-#overview { cursor: pointer; }
-#detail { cursor: crosshair; }
-.tl-wrap + .tl-wrap { margin-top: 8px; }
-svg text { font-family: var(--font-mono); font-size: 11px; fill: var(--muted); }
-svg text.strong { fill: var(--fg); font-weight: 500; }
+.player { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 16px; align-items: start; }
+.live { border: 1px solid var(--line); border-radius: 10px; background: var(--bg); padding: 14px; display: grid; gap: 14px; min-width: 0; }
+.live-time { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 24px; font-weight: 500; color: var(--accent); }
+.live-block { display: grid; gap: 4px; min-width: 0; }
+.live-block .k { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.live-main { font-size: 14.5px; font-weight: 500; }
+.live-sub { font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.live-main .ok { color: var(--ok); } .live-main .bad { color: var(--bad); } .live-main .muted { color: var(--muted); font-weight: 400; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; min-height: 24px; }
+.chip { font-family: var(--font-mono); font-size: 12px; padding: 2px 8px; border-radius: 999px; color: #fff; }
+.chip.none { color: var(--muted); border: 1px dashed var(--line); background: transparent; }
+.meter { position: relative; height: 8px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.meter span { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: var(--cand); }
+.meter span.hi { background: var(--accent); }
+.meter .thr { position: absolute; top: -2px; bottom: -2px; left: 45%; width: 2px; background: var(--fg); }
+.stage { display: grid; gap: 10px; min-width: 0; }
+.stage audio { width: 100%; height: 40px; }
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; }
+.toolbar input[type="range"] { width: 140px; accent-color: var(--accent); }
+.keys { font-size: 12px; color: var(--muted); }
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 13px; }
+.canvas-wrap { border: 1px solid var(--line); border-radius: 10px; background: var(--bg); overflow: hidden; }
+.canvas-wrap canvas { display: block; width: 100%; cursor: pointer; }
+.canvas-wrap canvas:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+@media (max-width: 860px) {
+  .player { grid-template-columns: 1fr; }
+  .live { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .live-time { grid-column: 1 / -1; }
+  .keys { display: none; }
+  .live { order: 2; }
+}
+@media (max-width: 480px) { .live { grid-template-columns: 1fr; } }
 
 .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 12.5px; color: var(--muted); margin-top: 10px; }
 .legend span { display: inline-flex; align-items: center; gap: 6px; }
@@ -182,26 +205,59 @@ footer { padding-block: 48px 40px; color: var(--muted); font-size: 13px; }
     <div class="tabs" role="tablist" aria-label="Example recordings" id="tabs"></div>
     <p class="session-note" id="session-note"></p>
 
-    <div class="row">
-      <audio id="audio" controls preload="metadata"></audio>
-      <div class="ctrl">
-        <span class="lbl" id="tol-lbl">Tolerance</span>
-        <div class="seg" role="group" aria-labelledby="tol-lbl">
-          <button type="button" class="tol" data-tol="0.5" aria-pressed="true">±0.50 s</button>
-          <button type="button" class="tol" data-tol="0.7" aria-pressed="false">±0.70 s</button>
-          <button type="button" class="tol" data-tol="1.0" aria-pressed="false">±1.00 s</button>
+    <div class="player">
+      <aside class="live" aria-label="What the system sees now">
+        <div class="live-time" id="lv-time">0:00.0</div>
+        <div class="live-block">
+          <span class="k">Speaking now</span>
+          <div class="chips" id="lv-speakers"></div>
         </div>
+        <div class="live-block">
+          <span class="k">Nearest System 1 candidate</span>
+          <div class="live-main" id="lv-cand">—</div>
+          <div class="meter" aria-hidden="true"><span id="lv-meter"></span><i class="thr"></i></div>
+          <div class="live-sub" id="lv-cand-sub"></div>
+        </div>
+        <div class="live-block">
+          <span class="k">Latest System 2 decision</span>
+          <div class="live-main" id="lv-dec">None yet</div>
+          <div class="live-sub" id="lv-dec-sub"></div>
+        </div>
+        <div class="live-block">
+          <span class="k">Next reference transfer</span>
+          <div class="live-main" id="lv-next">—</div>
+          <div class="live-sub" id="lv-next-sub"></div>
+        </div>
+      </aside>
+
+      <div class="stage">
+        <audio id="audio" controls preload="auto"></audio>
+        <div class="toolbar">
+          <div class="ctrl">
+            <label class="lbl" for="zoom">Zoom</label>
+            <input type="range" id="zoom" min="2" max="30" step="1" value="10">
+            <span class="mono" id="zoom-val">10 s</span>
+          </div>
+          <div class="ctrl">
+            <span class="lbl" id="tol-lbl">Tolerance</span>
+            <div class="seg" role="group" aria-labelledby="tol-lbl">
+              <button type="button" class="tol" data-tol="0.5" aria-pressed="true">±0.50 s</button>
+              <button type="button" class="tol" data-tol="0.7" aria-pressed="false">±0.70 s</button>
+              <button type="button" class="tol" data-tol="1.0" aria-pressed="false">±1.00 s</button>
+            </div>
+          </div>
+          <span class="keys">Space play/pause · ←/→ 1 s · Shift+←/→ 0.1 s · +/− zoom</span>
+        </div>
+        <div class="canvas-wrap"><canvas id="tl" tabindex="0" aria-label="Scrolling timeline centred on the playhead: waveform, speakers, reference transfers, System 1 candidates and System 2 predictions. Click to jump."></canvas></div>
+        <div class="canvas-wrap ov"><canvas id="ov" aria-label="Whole recording. Click to jump."></canvas></div>
       </div>
     </div>
-
-    <div class="tl-wrap"><svg id="overview" viewBox="0 0 1000 56" role="img" aria-label="Whole recording overview. Click to jump."></svg></div>
-    <div class="tl-wrap"><svg id="detail" viewBox="0 0 1000 300" role="img" aria-label="30-second detail view of speakers, candidates and predictions. Click to jump."></svg></div>
 
     <div class="legend">
       <span><i class="sw ref"></i>Reference floor transfer</span>
       <span><i class="sw miss"></i>Missed transfer</span>
-      <span><i class="sw cand"></i>System 1 candidate</span>
-      <span><i class="sw candhi"></i>Candidate above the System 2 threshold</span>
+      <span><i class="sw cand"></i>System 1 candidate (height = System 2 score)</span>
+      <span><i class="sw candhi"></i>Above the 0.45 threshold</span>
       <span><i class="sw ok"></i>Correct prediction</span>
       <span><i class="sw bad"></i>False alarm</span>
     </div>
@@ -324,140 +380,299 @@ const DATA = {"aepyx":{"speakers":4,"turns":[[2.5,6.16,0],[6.2,11.54,1],[11.68,1
     aiqwk: "Seven speakers and many same-speaker pauses. About half the transfers are found.",
     cqfmj: "A failure case. System 1 proposes candidates near every transfer, but none scores above the System 2 threshold, so nothing is predicted."
   };
-  const THR = 0.45, WIN = 30, X0 = 64, X1 = 970;
-  const NS = "http://www.w3.org/2000/svg";
+  const THR = 0.45;
+  const GUTTER = 46;
   const audio = document.getElementById("audio");
-  const ov = document.getElementById("overview"), dt = document.getElementById("detail");
-  const state = { sid: ORDER[0].id, tol: "0.5", winStart: 0 };
+  const tl = document.getElementById("tl"), ov = document.getElementById("ov");
+  const zoom = document.getElementById("zoom"), zoomVal = document.getElementById("zoom-val");
+  const $ = id => document.getElementById(id);
+  const state = { sid: ORDER[0].id, tol: "0.5", win: 10, peaks: {}, decoding: {} };
+  let audioCtx = null;
 
-  const css = () => getComputedStyle(document.documentElement);
-  const col = (cs, v) => cs.getPropertyValue(v).trim();
-  function el(parent, tag, attrs, text) {
-    const n = document.createElementNS(NS, tag);
-    for (const k in attrs) n.setAttribute(k, attrs[k]);
-    if (text !== undefined) n.textContent = text;
-    parent.appendChild(n); return n;
-  }
-  const dur = () => (audio.duration && isFinite(audio.duration)) ? audio.duration : Math.max(...DATA[state.sid].turns.map(t => t[1]));
+  const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const spkColor = i => cssVar("--s" + (i % 8));
+  const fmt = t => { t = Math.max(0, t); const m = Math.floor(t / 60), s = t - m * 60; return m + ":" + (s < 10 ? "0" : "") + s.toFixed(1); };
+  const D = () => DATA[state.sid];
+  const dur = () => (audio.duration && isFinite(audio.duration)) ? audio.duration : Math.max(...D().turns.map(t => t[1]));
 
   function matchInfo() {
-    const d = DATA[state.sid], m = d.matches[state.tol];
-    const matchedPred = new Set(m.pairs.map(p => p[0])), matchedGt = new Set(m.pairs.map(p => p[1]));
-    return { d, m, matchedPred, matchedGt };
+    const d = D(), m = d.matches[state.tol];
+    const predToGt = new Map(m.pairs.map(p => [p[0], p[1]]));
+    const gtMatched = new Set(m.pairs.map(p => p[1]));
+    return { d, m, predToGt, gtMatched };
+  }
+  function eventType(t) {
+    let best = null, bd = 1e9;
+    for (const e of D().events) { const dd = Math.abs(e[0] - t); if (dd < bd && (e[1] === "NTT" || e[1] === "ITT")) { bd = dd; best = e[1]; } }
+    return best || "SHIFT";
+  }
+
+  // Canvas sizing with device-pixel-ratio scaling.
+  function layout() {
+    const n = D().speakers;
+    const laneH = Math.max(8, Math.min(24, 150 / n));
+    const L = { top: 8, waveH: 56 };
+    L.laneTop = L.top + L.waveH + 10;
+    L.laneH = laneH;
+    L.laneBot = L.laneTop + n * laneH;
+    L.candBase = L.laneBot + 62;
+    L.candH = 48;
+    L.predY = L.candBase + 22;
+    L.axisY = L.predY + 18;
+    L.height = L.axisY + 22;
+    return L;
+  }
+  function sizeCanvas(cv, h) {
+    const dpr = window.devicePixelRatio || 1, w = cv.clientWidth;
+    cv.style.height = h + "px";
+    if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
+    const ctx = cv.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx, w, h };
+  }
+
+  function drawTimeline() {
+    const L = layout(), { ctx, w, h } = sizeCanvas(tl, L.height);
+    const { d, predToGt, gtMatched } = matchInfo();
+    const now = audio.currentTime, half = state.win / 2, t0 = now - half, t1 = now + half;
+    const X0 = GUTTER, X1 = w - 8, x = t => X0 + ((t - t0) / state.win) * (X1 - X0);
+    const vis = t => t >= t0 - 1 && t <= t1 + 1;
+    const c = { bg: cssVar("--bg"), line: cssVar("--line"), muted: cssVar("--muted"), fg: cssVar("--fg"), accent: cssVar("--accent"), ok: cssVar("--ok"), bad: cssVar("--bad"), ref: cssVar("--ref"), cand: cssVar("--cand") };
+    const mono = "11px " + cssVar("--font-mono");
+    ctx.clearRect(0, 0, w, h);
+    ctx.font = mono; ctx.textBaseline = "middle";
+
+    // Row labels
+    ctx.fillStyle = c.fg;
+    ctx.fillText("Audio", 8, L.top + L.waveH / 2);
+    for (let i = 0; i < d.speakers; i++) {
+      const y = L.laneTop + i * L.laneH + L.laneH / 2;
+      if (L.laneH >= 10 || i % 2 === 0) { ctx.font = (L.laneH < 11 ? "9px " : "11px ") + cssVar("--font-mono"); ctx.fillText("S" + (i + 1), 8, y); }
+    }
+    ctx.font = mono;
+    ctx.fillText("Sys 1", 8, L.candBase - 12);
+    ctx.fillText("Sys 2", 8, L.predY);
+
+    ctx.save(); ctx.beginPath(); ctx.rect(X0, 0, X1 - X0, h); ctx.clip();
+
+    // Tolerance bands + reference lines (behind everything else)
+    const tol = parseFloat(state.tol);
+    d.gt.forEach(g => {
+      if (!vis(g)) return;
+      ctx.fillStyle = c.accent; ctx.globalAlpha = 0.08;
+      ctx.fillRect(x(g - tol), L.top, x(g + tol) - x(g - tol), L.predY + 8 - L.top);
+      ctx.globalAlpha = 1;
+    });
+
+    // Waveform
+    const pk = state.peaks[state.sid];
+    const midW = L.top + L.waveH / 2;
+    ctx.strokeStyle = c.line; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(X0, midW); ctx.lineTo(X1, midW); ctx.stroke();
+    if (pk) {
+      ctx.fillStyle = c.muted;
+      const pxPerSec = (X1 - X0) / state.win, step = Math.max(1, Math.floor(pk.rate / pxPerSec));
+      const i0 = Math.max(0, Math.floor(t0 * pk.rate)), i1 = Math.min(pk.v.length, Math.ceil(t1 * pk.rate));
+      for (let i = i0 - (i0 % step); i < i1; i += step) {
+        let m = 0; for (let j = i; j < Math.min(i + step, pk.v.length); j++) if (pk.v[j] > m) m = pk.v[j];
+        const a = (m / pk.max) * (L.waveH / 2 - 2), xx = x(i / pk.rate);
+        ctx.fillRect(xx, midW - a, Math.max(1, (X1 - X0) / state.win / pk.rate * step - 0.5), 2 * a);
+      }
+    } else {
+      ctx.fillStyle = c.muted; ctx.fillText("Loading waveform…", X0 + 8, midW);
+    }
+
+    // Speaker lanes
+    for (let i = 0; i < d.speakers; i++) {
+      const y = L.laneTop + i * L.laneH + L.laneH / 2;
+      ctx.strokeStyle = c.line; ctx.beginPath(); ctx.moveTo(X0, y); ctx.lineTo(X1, y); ctx.stroke();
+    }
+    d.turns.forEach(tr => {
+      if (tr[1] < t0 || tr[0] > t1) return;
+      ctx.fillStyle = spkColor(tr[2]);
+      const y = L.laneTop + tr[2] * L.laneH + 1;
+      ctx.fillRect(x(tr[0]), y, Math.max(1.5, x(tr[1]) - x(tr[0])), Math.max(3, L.laneH - 2));
+    });
+
+    // Reference transfer lines + labels
+    d.gt.forEach(g => {
+      if (!vis(g)) return;
+      ctx.strokeStyle = c.ref; ctx.lineWidth = 1.8;
+      ctx.setLineDash(gtMatched.has(g) ? [] : [4, 3]);
+      ctx.beginPath(); ctx.moveTo(x(g), L.laneTop - 4); ctx.lineTo(x(g), L.predY + 8); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = c.fg; ctx.font = "10px " + cssVar("--font-mono");
+      ctx.fillText(eventType(g), x(g) + 3, L.laneBot + 10);
+      ctx.font = mono;
+    });
+
+    // System 1 candidates as score bars + threshold
+    ctx.strokeStyle = c.line; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(X0, L.candBase); ctx.lineTo(X1, L.candBase); ctx.stroke();
+    d.cands.forEach(cd => {
+      if (!vis(cd[0])) return;
+      ctx.fillStyle = cd[1] >= THR ? c.accent : c.cand;
+      const hh = Math.max(1, cd[1] * L.candH);
+      ctx.fillRect(x(cd[0]) - 1.5, L.candBase - hh, 3, hh);
+    });
+    const ty = L.candBase - THR * L.candH;
+    ctx.strokeStyle = c.accent; ctx.setLineDash([2, 3]);
+    ctx.beginPath(); ctx.moveTo(X0, ty); ctx.lineTo(X1, ty); ctx.stroke(); ctx.setLineDash([]);
+
+    // System 2 predictions
+    ctx.strokeStyle = c.line; ctx.beginPath(); ctx.moveTo(X0, L.predY); ctx.lineTo(X1, L.predY); ctx.stroke();
+    d.preds.forEach(p => {
+      if (!vis(p[0])) return;
+      const cx = x(p[0]);
+      ctx.fillStyle = predToGt.has(p[0]) ? c.ok : c.bad;
+      ctx.beginPath(); ctx.moveTo(cx, L.predY - 7); ctx.lineTo(cx + 7, L.predY); ctx.lineTo(cx, L.predY + 7); ctx.lineTo(cx - 7, L.predY); ctx.closePath(); ctx.fill();
+    });
+
+    // Axis
+    ctx.strokeStyle = c.line; ctx.beginPath(); ctx.moveTo(X0, L.axisY); ctx.lineTo(X1, L.axisY); ctx.stroke();
+    const pps = (X1 - X0) / state.win;
+    const every = [1, 2, 5, 10, 15, 30].find(v => v * pps >= 56) || 30;
+    const minor = pps >= 14 ? (every <= 2 ? 0.5 : 1) : every;
+    ctx.fillStyle = c.muted; ctx.textAlign = "center"; ctx.strokeStyle = c.muted; ctx.lineWidth = 1;
+    for (let t = Math.ceil(t0 / minor) * minor; t <= t1; t += minor) {
+      if (t < 0) continue;
+      const isLabel = Math.abs(t / every - Math.round(t / every)) < 1e-6;
+      ctx.beginPath(); ctx.moveTo(x(t), L.axisY); ctx.lineTo(x(t), L.axisY + (isLabel ? 5 : 3)); ctx.stroke();
+      if (isLabel && x(t) > X0 + 16 && x(t) < X1 - 16) ctx.fillText(fmt(t).replace(/\.0$/, ""), x(t), L.axisY + 14);
+    }
+    ctx.textAlign = "left";
+
+    // Playhead (centre)
+    const px = x(now);
+    ctx.strokeStyle = c.accent; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(px, L.top); ctx.lineTo(px, L.axisY); ctx.stroke();
+    ctx.restore();
   }
 
   function drawOverview() {
-    const cs = css(), { d, matchedPred, matchedGt } = matchInfo(), D = dur();
-    ov.textContent = "";
-    const x = t => X0 + (t / D) * (X1 - X0);
-    el(ov, "text", { x: 8, y: 22, class: "strong" }, "Full");
-    d.turns.forEach(t => el(ov, "rect", { x: x(t[0]), y: 10, width: Math.max(1, x(t[1]) - x(t[0])), height: 16, fill: col(cs, "--s" + (t[2] % 8)) }));
-    d.gt.forEach(g => el(ov, "line", { x1: x(g), x2: x(g), y1: 30, y2: 42, stroke: col(cs, "--ref"), "stroke-width": 1.5, "stroke-dasharray": matchedGt.has(g) ? "none" : "2 2" }));
-    d.preds.forEach(p => el(ov, "rect", { x: x(p[0]) - 1.5, y: 44, width: 3, height: 8, fill: matchedPred.has(p[0]) ? col(cs, "--ok") : col(cs, "--bad") }));
-    const ws = state.winStart, we = Math.min(D, ws + WIN);
-    el(ov, "rect", { x: x(ws), y: 4, width: Math.max(4, x(we) - x(ws)), height: 50, fill: col(cs, "--accent"), "fill-opacity": 0.10, stroke: col(cs, "--accent"), "stroke-width": 1.2, rx: 3 });
-    el(ov, "line", { x1: x(audio.currentTime), x2: x(audio.currentTime), y1: 4, y2: 54, stroke: col(cs, "--accent"), "stroke-width": 2 });
+    const { ctx, w, h } = sizeCanvas(ov, 46);
+    const { d, predToGt, gtMatched } = matchInfo(), T = dur();
+    const X0 = GUTTER, X1 = w - 8, x = t => X0 + (t / T) * (X1 - X0);
+    ctx.clearRect(0, 0, w, h);
+    ctx.font = "11px " + cssVar("--font-mono"); ctx.textBaseline = "middle"; ctx.fillStyle = cssVar("--fg");
+    ctx.fillText("Full", 8, 16);
+    d.turns.forEach(tr => { ctx.fillStyle = spkColor(tr[2]); ctx.fillRect(x(tr[0]), 8, Math.max(1, x(tr[1]) - x(tr[0])), 14); });
+    ctx.lineWidth = 1.4;
+    d.gt.forEach(g => { ctx.strokeStyle = cssVar("--ref"); ctx.setLineDash(gtMatched.has(g) ? [] : [2, 2]); ctx.beginPath(); ctx.moveTo(x(g), 25); ctx.lineTo(x(g), 34); ctx.stroke(); });
+    ctx.setLineDash([]);
+    d.preds.forEach(p => { ctx.fillStyle = predToGt.has(p[0]) ? cssVar("--ok") : cssVar("--bad"); ctx.fillRect(x(p[0]) - 1.5, 36, 3, 7); });
+    const now = audio.currentTime, a = x(Math.max(0, now - state.win / 2)), b = x(Math.min(T, now + state.win / 2));
+    ctx.fillStyle = cssVar("--accent"); ctx.globalAlpha = 0.12; ctx.fillRect(a, 3, Math.max(3, b - a), 41); ctx.globalAlpha = 1;
+    ctx.strokeStyle = cssVar("--accent"); ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x(now), 3); ctx.lineTo(x(now), 44); ctx.stroke();
   }
 
-  function drawDetail() {
-    const cs = css(), { d, matchedPred, matchedGt } = matchInfo(), D = dur();
-    dt.textContent = "";
-    const ws = state.winStart, we = ws + WIN, tol = parseFloat(state.tol);
-    const x = t => X0 + ((t - ws) / WIN) * (X1 - X0);
-    const vis = t => t >= ws - 1 && t <= we + 1;
-    const n = d.speakers, laneTop = 14, laneArea = 128, laneH = laneArea / n;
-    const clip = el(el(dt, "defs", {}), "clipPath", { id: "clip" });
-    el(clip, "rect", { x: X0, y: 0, width: X1 - X0, height: 300 });
-    // speaker lanes
-    for (let i = 0; i < n; i++) {
-      const y = laneTop + i * laneH;
-      el(dt, "line", { x1: X0, x2: X1, y1: y + laneH / 2, y2: y + laneH / 2, stroke: col(cs, "--line"), "stroke-width": 1 });
-      if (laneH >= 9 || i % 2 === 0) el(dt, "text", { x: 8, y: y + laneH / 2 + 4, class: "strong", style: laneH < 11 ? "font-size:9px" : "" }, "S" + (i + 1));
+  function updateLive() {
+    const { d, predToGt, gtMatched } = matchInfo(), now = audio.currentTime;
+    $("lv-time").textContent = fmt(now);
+    const active = [...new Set(d.turns.filter(t => t[0] <= now && now <= t[1]).map(t => t[2]))].sort((a, b) => a - b);
+    $("lv-speakers").innerHTML = active.length
+      ? active.map(i => `<span class="chip" style="background:${spkColor(i)}">S${i + 1}</span>`).join("")
+      : `<span class="chip none">silence</span>`;
+    let nc = null, nd = 1e9;
+    for (const cd of d.cands) { const dd = Math.abs(cd[0] - now); if (dd < nd) { nd = dd; nc = cd; } }
+    const meter = $("lv-meter");
+    if (nc) {
+      const pass = nc[1] >= THR;
+      $("lv-cand").innerHTML = `Score ${nc[1].toFixed(2)} · <span class="${pass ? "ok" : "muted"}">${pass ? "above threshold" : "below threshold"}</span>`;
+      $("lv-cand-sub").textContent = `at ${fmt(nc[0])} (${nc[0] - now >= 0 ? "+" : "−"}${Math.abs(nc[0] - now).toFixed(1)} s)`;
+      meter.style.width = Math.min(100, nc[1] * 100) + "%"; meter.className = pass ? "hi" : "";
     }
-    const g = el(dt, "g", { "clip-path": "url(#clip)" });
-    d.turns.forEach(t => { if (t[1] >= ws && t[0] <= we) el(g, "rect", { x: x(t[0]), y: laneTop + t[2] * laneH + 1, width: Math.max(1.5, x(t[1]) - x(t[0])), height: Math.max(3, laneH - 2), rx: 2, fill: col(cs, "--s" + (t[2] % 8)) }); });
-    // reference transfers with tolerance windows
-    const refTop = laneTop, refBot = 262;
-    d.gt.forEach(gt => {
-      if (!vis(gt)) return;
-      el(g, "rect", { x: x(gt - tol), y: refTop, width: x(gt + tol) - x(gt - tol), height: refBot - refTop, fill: col(cs, "--accent"), "fill-opacity": 0.07 });
-      el(g, "line", { x1: x(gt), x2: x(gt), y1: refTop, y2: refBot, stroke: col(cs, "--ref"), "stroke-width": 1.8, "stroke-dasharray": matchedGt.has(gt) ? "none" : "4 3" });
-    });
-    // event type labels
-    d.events.forEach(e => { if ((e[1] === "NTT" || e[1] === "ITT") && vis(e[0])) el(g, "text", { x: x(e[0]) + 3, y: 156, class: "strong", style: "font-size:10px" }, e[1]); });
-    // System 1 candidates as score bars
-    const cBase = 214, cH = 44;
-    el(dt, "text", { x: 8, y: cBase - 2, class: "strong" }, "Sys 1");
-    el(dt, "line", { x1: X0, x2: X1, y1: cBase, y2: cBase, stroke: col(cs, "--line"), "stroke-width": 1 });
-    const ty = cBase - THR * cH;
-    el(dt, "line", { x1: X0, x2: X1, y1: ty, y2: ty, stroke: col(cs, "--accent"), "stroke-width": 1, "stroke-dasharray": "2 3" });
-    el(dt, "text", { x: X1 + 4, y: ty + 4 }, "0.45");
-    d.cands.forEach(c => { if (vis(c[0])) el(g, "rect", { x: x(c[0]) - 1.5, y: cBase - c[1] * cH, width: 3, height: Math.max(1, c[1] * cH), fill: c[1] >= THR ? col(cs, "--accent") : col(cs, "--cand") }); });
-    // System 2 predictions
-    const pY = 240;
-    el(dt, "text", { x: 8, y: pY + 4, class: "strong" }, "Sys 2");
-    el(dt, "line", { x1: X0, x2: X1, y1: pY, y2: pY, stroke: col(cs, "--line"), "stroke-width": 1 });
-    d.preds.forEach(p => { if (vis(p[0])) { const cx = x(p[0]); el(g, "rect", { x: cx - 6, y: pY - 6, width: 12, height: 12, transform: `rotate(45 ${cx} ${pY})`, fill: matchedPred.has(p[0]) ? col(cs, "--ok") : col(cs, "--bad") }); } });
-    // axis
-    const aY = 272;
-    el(dt, "line", { x1: X0, x2: X1, y1: aY, y2: aY, stroke: col(cs, "--line"), "stroke-width": 1 });
-    for (let t = Math.ceil(ws / 5) * 5; t <= we; t += 5) {
-      el(dt, "line", { x1: x(t), x2: x(t), y1: aY, y2: aY + 5, stroke: col(cs, "--muted"), "stroke-width": 1 });
-      const mm = Math.floor(t / 60), ss = String(Math.round(t % 60)).padStart(2, "0");
-      el(dt, "text", { x: x(t), y: aY + 19, "text-anchor": "middle" }, `${mm}:${ss}`);
+    const past = d.preds.filter(p => p[0] <= now);
+    if (past.length) {
+      const p = past[past.length - 1], g = predToGt.get(p[0]);
+      $("lv-dec").innerHTML = g !== undefined ? `<span class="ok">Correct transfer</span>` : `<span class="bad">False alarm</span>`;
+      $("lv-dec-sub").textContent = g !== undefined
+        ? `predicted ${fmt(p[0])}, reference ${eventType(g)} at ${fmt(g)} (${Math.abs(p[0] - g).toFixed(2)} s off)`
+        : `predicted ${fmt(p[0])}, no reference transfer within ±${parseFloat(state.tol).toFixed(2)} s`;
+    } else {
+      $("lv-dec").innerHTML = `<span class="muted">None yet</span>`;
+      $("lv-dec-sub").textContent = d.preds.length ? "" : "System 2 accepts no candidate in this recording";
     }
-    // playhead
-    const now = audio.currentTime;
-    if (now >= ws && now <= we) el(dt, "line", { x1: x(now), x2: x(now), y1: 6, y2: aY, stroke: col(cs, "--accent"), "stroke-width": 2 });
+    const next = d.gt.find(g => g > now);
+    if (next !== undefined) {
+      const caught = gtMatched.has(next);
+      $("lv-next").innerHTML = `${eventType(next)} in ${(next - now).toFixed(1)} s`;
+      $("lv-next-sub").innerHTML = `at ${fmt(next)} · ${caught ? '<span style="color:var(--ok)">will be found</span>' : '<span style="color:var(--bad)">will be missed</span>'}`;
+    } else {
+      $("lv-next").innerHTML = `<span class="muted">None left</span>`; $("lv-next-sub").textContent = "";
+    }
   }
 
   function scores() {
     const { d, m } = matchInfo();
     const np = d.preds.length, ng = d.gt.length, tp = m.TP;
     const P = np ? tp / np : 0, R = ng ? tp / ng : 0, F = P + R ? 2 * P * R / (P + R) : 0;
-    document.getElementById("s-gt").textContent = ng;
-    document.getElementById("s-pred").textContent = np;
-    document.getElementById("s-tp").textContent = tp;
-    document.getElementById("s-fpfn").textContent = m.FP + " / " + m.FN;
-    document.getElementById("s-pr").textContent = P.toFixed(2) + " / " + R.toFixed(2);
-    document.getElementById("s-f1").textContent = F.toFixed(2);
+    $("s-gt").textContent = ng; $("s-pred").textContent = np; $("s-tp").textContent = tp;
+    $("s-fpfn").textContent = m.FP + " / " + m.FN;
+    $("s-pr").textContent = P.toFixed(2) + " / " + R.toFixed(2);
+    $("s-f1").textContent = F.toFixed(2);
   }
 
-  function follow() {
-    const D = dur(), t = audio.currentTime;
-    if (t < state.winStart + 2 || t > state.winStart + WIN - 6) state.winStart = Math.max(0, Math.min(D - WIN, t - 8));
-  }
-  function render() { drawOverview(); drawDetail(); scores(); }
+  function render() { drawTimeline(); drawOverview(); updateLive(); }
 
   let raf = null;
-  function loop() { follow(); render(); raf = audio.paused ? null : requestAnimationFrame(loop); }
+  function loop() { render(); raf = audio.paused ? null : requestAnimationFrame(loop); }
   audio.addEventListener("play", () => { if (!raf) raf = requestAnimationFrame(loop); });
-  audio.addEventListener("seeked", () => { follow(); render(); });
-  audio.addEventListener("loadedmetadata", render);
+  ["seeked", "timeupdate", "loadedmetadata", "pause"].forEach(ev => audio.addEventListener(ev, () => { if (!raf) render(); }));
 
-  function seekFromEvent(ev, svg, toTime) {
-    const r = svg.getBoundingClientRect();
-    const vx = ((ev.clientX - r.left) / r.width) * 1000;
-    if (vx < X0 || vx > X1) return;
-    const t = toTime((vx - X0) / (X1 - X0));
-    state.winStart = Math.max(0, Math.min(dur() - WIN, t - WIN / 2));
-    audio.currentTime = Math.max(0, Math.min(dur(), t));
-    render();
+  async function loadPeaks(id) {
+    if (state.peaks[id] || state.decoding[id]) return;
+    state.decoding[id] = true;
+    try {
+      const buf = await (await fetch("demo/audio/" + id + ".mp3")).arrayBuffer();
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      const ab = await new Promise((res, rej) => { const p = audioCtx.decodeAudioData(buf, res, rej); if (p && p.then) p.then(res, rej); });
+      const ch = ab.getChannelData(0), rate = 100, hop = Math.floor(ab.sampleRate / rate);
+      const v = new Float32Array(Math.ceil(ch.length / hop)); let max = 1e-4;
+      for (let i = 0, k = 0; i < ch.length; i += hop, k++) {
+        let m = 0; for (let j = i; j < Math.min(i + hop, ch.length); j++) { const a = Math.abs(ch[j]); if (a > m) m = a; }
+        v[k] = m; if (m > max) max = m;
+      }
+      state.peaks[id] = { v, rate, max };
+      if (state.sid === id) render();
+    } catch (e) {
+      state.peaks[id] = null;
+    } finally { state.decoding[id] = false; }
   }
-  ov.addEventListener("click", ev => seekFromEvent(ev, ov, f => f * dur()));
-  dt.addEventListener("click", ev => {
-    const r = dt.getBoundingClientRect(), vx = ((ev.clientX - r.left) / r.width) * 1000;
-    if (vx < X0 || vx > X1) return;
-    audio.currentTime = state.winStart + ((vx - X0) / (X1 - X0)) * WIN; render();
+
+  function seek(t) { audio.currentTime = Math.max(0, Math.min(dur() - 0.05, t)); render(); }
+  tl.addEventListener("click", ev => {
+    const r = tl.getBoundingClientRect(), X0 = GUTTER, X1 = r.width - 8, xx = ev.clientX - r.left;
+    if (xx < X0) return;
+    seek(audio.currentTime - state.win / 2 + ((xx - X0) / (X1 - X0)) * state.win);
+  });
+  ov.addEventListener("click", ev => {
+    const r = ov.getBoundingClientRect(), X0 = GUTTER, X1 = r.width - 8, xx = ev.clientX - r.left;
+    if (xx < X0) return;
+    seek(((xx - X0) / (X1 - X0)) * dur());
+  });
+  function setZoom(v) {
+    state.win = Math.max(2, Math.min(30, v)); zoom.value = state.win; zoomVal.textContent = state.win + " s"; render();
+  }
+  zoom.addEventListener("input", () => setZoom(parseInt(zoom.value, 10)));
+  document.addEventListener("keydown", ev => {
+    const tag = (ev.target.tagName || "").toLowerCase();
+    if (["input", "textarea", "select", "audio"].includes(tag) || ev.metaKey || ev.ctrlKey || ev.altKey) return;
+    const demo = document.getElementById("demo"), r = demo.getBoundingClientRect();
+    if (r.bottom < 0 || r.top > window.innerHeight) return;
+    if (ev.key === " " && tag !== "button") { ev.preventDefault(); audio.paused ? audio.play() : audio.pause(); }
+    else if (ev.key === "ArrowLeft") { ev.preventDefault(); seek(audio.currentTime - (ev.shiftKey ? 0.1 : 1)); }
+    else if (ev.key === "ArrowRight") { ev.preventDefault(); seek(audio.currentTime + (ev.shiftKey ? 0.1 : 1)); }
+    else if (ev.key === "+" || ev.key === "=") setZoom(state.win - 2);
+    else if (ev.key === "-" || ev.key === "_") setZoom(state.win + 2);
   });
 
-  const tabs = document.getElementById("tabs");
+  const tabs = $("tabs");
   function select(id) {
-    state.sid = id; state.winStart = 0;
+    state.sid = id;
     tabs.querySelectorAll(".tab").forEach(b => b.setAttribute("aria-selected", b.dataset.id === id));
-    document.getElementById("session-note").textContent = NOTES[id];
+    $("session-note").textContent = NOTES[id];
     audio.src = "demo/audio/" + id + ".mp3";
-    render();
+    scores(); render(); loadPeaks(id);
   }
   ORDER.forEach(o => {
     const b = document.createElement("button");
@@ -469,17 +684,19 @@ const DATA = {"aepyx":{"speakers":4,"turns":[[2.5,6.16,0],[6.2,11.54,1],[11.68,1
   document.querySelectorAll(".tol").forEach(b => b.addEventListener("click", () => {
     state.tol = b.dataset.tol;
     document.querySelectorAll(".tol").forEach(o => o.setAttribute("aria-pressed", o === b));
-    render();
+    scores(); render();
   }));
+  window.addEventListener("resize", render);
   window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", render);
   new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 
-  document.getElementById("copy-bib").addEventListener("click", ev => {
-    const btn = ev.currentTarget, pre = document.getElementById("bib");
+  $("copy-bib").addEventListener("click", ev => {
+    const btn = ev.currentTarget, pre = $("bib");
     navigator.clipboard.writeText(pre.textContent).then(() => { btn.textContent = "Copied"; setTimeout(() => btn.textContent = "Copy", 1500); })
       .catch(() => { const r = document.createRange(); r.selectNodeContents(pre); const s = getSelection(); s.removeAllRanges(); s.addRange(r); });
   });
 
+  if (window.innerWidth < 600) setZoom(8);
   select(state.sid);
 })();
 </script>
