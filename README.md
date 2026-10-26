@@ -4,6 +4,8 @@ Code for the paper:
 
 **Leveraging Dual-Process Theory for Multimodal Multiparty Turn-Taking Prediction**
 
+**Project page and interactive demo:** <https://ruddy202.github.io/DualTurn/>
+
 DualTurn predicts floor transfers in multiparty conversation in two stages. A fast discovery stage (System 1) proposes candidate transition points on the continuous timeline. A selective verification stage (System 2) then accepts or rejects each candidate using acoustic, linguistic and, for Multi-TPC, visual and motion evidence.
 
 <p align="center">
@@ -114,7 +116,7 @@ export HF_TOKEN=<your Hugging Face token>
 
 The datasets are not redistributed here.
 
-The project website (branch `archive-v1`) contains five VoxConverse TEST audio excerpts and stays unpublished until redistribution rights for those excerpts are confirmed.
+The [interactive demo](https://ruddy202.github.io/DualTurn/) plays five VoxConverse TEST recordings with the system's output; the audio and labels come from VoxConverse (Chung et al., 2020), released under CC BY 4.0. The website source is on the `archive-v1` branch (`docs/`).
 
 - **VoxConverse**: [RTTM annotations (v0.3)](https://github.com/joonson/voxconverse), [DEV audio](https://www.robots.ox.ac.uk/~vgg/data/voxconverse/data/voxconverse_dev_wav.zip), [TEST audio](https://www.robots.ox.ac.uk/~vgg/data/voxconverse/data/voxconverse_test_wav.zip). DEV is split into TRAIN/VAL; the official TEST partition is used for TEST.
 - **Multi-TPC**: [Zenodo (doi:10.5281/zenodo.17935560)](https://doi.org/10.5281/zenodo.17935560). The experiments use 23 complete sessions from seven triadic groups.
