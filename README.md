@@ -114,7 +114,7 @@ export HF_TOKEN=<your Hugging Face token>
 
 The datasets are not redistributed here.
 
-**Audio-demo release gate:** The website branch contains five VoxConverse TEST audio excerpts. These recordings must not be publicly served until rights to redistribute the individual excerpts have been confirmed, including any conditions associated with the underlying source videos. Attribution on the website is not itself proof of redistribution permission. The website should remain undeployed until this check is complete.
+The [interactive demo](https://ruddy202.github.io/DualTurn/) in `docs/` plays five VoxConverse TEST recordings with the system's output; the audio and labels come from VoxConverse (Chung et al., 2020), released under CC BY 4.0.
 
 - **VoxConverse**: [RTTM annotations (v0.3)](https://github.com/joonson/voxconverse), [DEV audio](https://www.robots.ox.ac.uk/~vgg/data/voxconverse/data/voxconverse_dev_wav.zip), [TEST audio](https://www.robots.ox.ac.uk/~vgg/data/voxconverse/data/voxconverse_test_wav.zip). DEV is split into TRAIN/VAL; the official TEST partition is used for TEST.
 - **Multi-TPC**: [Zenodo (doi:10.5281/zenodo.17935560)](https://doi.org/10.5281/zenodo.17935560). The experiments use 23 complete sessions from seven triadic groups.
