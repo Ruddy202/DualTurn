@@ -50,9 +50,6 @@ The script writes `bed_0000.wav`–`bed_0095.wav` as mono 16 kHz PCM-16 audio an
 
 **Reproduction limits:** The archived generation did not pin a Hugging Face model revision or complete package versions, so regenerated WAVs are not guaranteed to be bitwise identical to the originals. The original 96 WAVs are not included here.
 
-**Archival mixing provenance, not an assertion about the final TASLP run:** A separate earlier `augment_vap_train_only.py` pipeline mixed one randomly chosen bed into training audio with probability 0.6 and uniformly sampled bed SNR of 10–25 dB. It used global seed 1337 combined with the session ID, tiled or cropped beds to recording duration, and mixed a common bed segment into both channels with per-channel RMS scaling (signal floor 0.02). It also applied gain, Gaussian noise and mild filtering. This older VAP-specific script does not, by itself, establish every augmentation choice used in the submitted DualTurn experiments.
-
-
 ## 2. Split
 
 | Partition | Sessions | Source |
@@ -146,7 +143,17 @@ Each run directory contains trained models (`models/`), TEST metrics (`eval/`) a
 | Synthetic only | ✓ | ✓ | |
 | Waveform augmentation | ✓ | | ✓ |
 
-Waveform augmentation includes random gain, Gaussian noise and background-bed mixing. **Speed/time transformations require source-level verification:** the earlier documentation stated that speed perturbation and time shifting were not used, whereas the submitted manuscript's augmentation description indicates speed perturbation. The available notebook content could not be reliably inspected here to resolve this discrepancy. Do not treat this documentation as an authoritative confirmation of either claim until the executed configuration and notebook source are checked against the submitted article.
+Waveform augmentation follows the procedure described in the paper. During training, each waveform receives one or two randomly selected transformations, one of them chosen with probability 0.6:
+
+- gain scaling (0.85–1.15);
+- Gaussian noise (18–30 dB SNR);
+- temporal shift (up to ±10 ms);
+- speed perturbation (0.98–1.02);
+- mild low- or high-pass filtering.
+
+Background-bed mixing is applied independently with probability 0.6, using one of the 96 beds at an SNR drawn from 10–25 dB.
+
+The augmented training waveforms used in the reported runs were generated once, in the earlier `18thAug_VAP_RRFAP_TEXT_META_CONFIRMER_v1` run, and reused by the later runs through `VOX_BASE_ASSET_RUN_ROOT` (the waveform-augmentation notebook's output records this reuse). The released notebooks only regenerate augmented audio when that earlier run is absent; their `safe_audio_augment` function applies gain, noise and bed mixing but not the temporal shift, speed perturbation or filtering, so a fresh run without the original augmented audio differs from the reported runs in this respect.
 
 ## 7. Evaluation settings
 
