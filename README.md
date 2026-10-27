@@ -226,7 +226,7 @@ DualTurn/
   author = {Patamia, Rutherford A. and Liu, Ming and Luo, Wei and
             Ekong, Favour and Mohammed, Rehan and Liu, Gang and Cosgun, Akan},
   year   = {2026},
-  note   = {Submitted to IEEE/ACM Transactions on Audio, Speech, and Language Processing, 2026}
+  note   = {Submitted to IEEE Transactions on Audio, Speech and Language Processing, 2026}
 }
 ```
 
