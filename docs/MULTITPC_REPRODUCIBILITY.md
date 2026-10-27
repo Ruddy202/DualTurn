@@ -109,4 +109,4 @@ The held-out notebook keeps internal prefixes because they appear in its frozen-
 
 ## 10. Hardware
 
-The held-out evaluation ran on one NVIDIA RTX 4070 (12 GB). The ablations ran on one RTX 4080 SUPER (16 GB). Software: Python 3.11.15, PyTorch 2.7.0+cu118.
+All experiments ran on a single consumer GPU with 12–16 GB of memory, using Python 3.11.15 and PyTorch 2.7.0+cu118.
