@@ -176,4 +176,4 @@ All weights are downloaded from their upstream sources on first use.
 
 ## 9. Hardware
 
-The original runs used one NVIDIA RTX 4070 (12 GB) with Python 3.11.15 and PyTorch 2.7.0+cu118.
+All experiments ran on a single consumer GPU with 12–16 GB of memory, using Python 3.11.15 and PyTorch 2.7.0+cu118.

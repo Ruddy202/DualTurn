@@ -192,7 +192,7 @@ No TEST labels enter any feature or prediction.
 
 **Re-running.** The seven-group and ablation notebooks hash their own source code into the run directory name. A fresh run therefore writes to a new directory and does not reuse caches from an earlier run.
 
-**Hardware.** The VoxConverse experiments and the Multi-TPC held-out evaluation were run on one NVIDIA RTX 4070 (12 GB). The Multi-TPC ablations were run on one RTX 4080 SUPER (16 GB). The notebooks fall back to CPU for some stages if free GPU memory is low (`CUDA_MIN_FREE_GB_FOR_MAIN`, `FORCE_MAIN_CPU`).
+**Hardware.** All experiments ran on a single consumer GPU with 12–16 GB of memory. The notebooks fall back to CPU for some stages if free GPU memory is low (`CUDA_MIN_FREE_GB_FOR_MAIN`, `FORCE_MAIN_CPU`).
 
 ## Repository layout
 
